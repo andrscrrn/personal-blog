@@ -55,6 +55,16 @@ body {
   @apply font-semibold tracking-tight;
 }
 
+/* headings: don't underline the autolink wrapper; only show subtle hover */
+.prose h1 a,
+.prose h2 a,
+.prose h3 a,
+.prose h4 a,
+.prose h5 a,
+.prose h6 a {
+  @apply no-underline text-inherit hover:text-primary;
+}
+
 .prose a {
   @apply text-primary underline underline-offset-4 hover:no-underline;
 }

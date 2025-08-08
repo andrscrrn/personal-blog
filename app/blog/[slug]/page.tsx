@@ -74,7 +74,7 @@ export default async function BlogPostPage({ params }: Props) {
   });
   return (
     <div className="space-y-8">
-      <article className="prose prose-zinc dark:prose-invert">
+      <article className="prose prose-zinc dark:prose-invert prose-lg mx-auto">
         <h1>{post.meta.title}</h1>
         <p className="!mt-0 text-sm text-muted-foreground">
           <time>{new Date(post.meta.date).toLocaleDateString()}</time>
