@@ -1,4 +1,4 @@
-import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import { getAllPosts } from "@/lib/posts";
 import { absoluteUrl } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -7,13 +7,24 @@ export async function GET() {
   const posts = await getAllPosts();
   const items = await Promise.all(
     posts.map(async (p) => {
-      const post = await getPostBySlug(p.slug);
       const link = absoluteUrl(`/blog/${p.slug}`);
-      return `\n    <item>\n      <title>${escapeXml(p.title)}</title>\n      <link>${link}</link>\n      <guid>${link}</guid>\n      <pubDate>${new Date(p.date).toUTCString()}</pubDate>\n      <description>${escapeXml(p.description || "")}</description>\n    </item>`;
+      return `\n    <item>\n      <title>${escapeXml(
+        p.title
+      )}</title>\n      <link>${link}</link>\n      <guid>${link}</guid>\n      <pubDate>${new Date(
+        p.date
+      ).toUTCString()}</pubDate>\n      <description>${escapeXml(
+        p.description || ""
+      )}</description>\n    </item>`;
     })
   );
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n  <channel>\n    <title>Andres Carreño Blog</title>\n    <link>${absoluteUrl("/")}</link>\n    <description>Personal blog</description>\n    ${items.join("")}\n  </channel>\n</rss>`;
-  return new Response(xml, { headers: { "Content-Type": "application/rss+xml" } });
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n  <channel>\n    <title>Andres Carreño Blog</title>\n    <link>${absoluteUrl(
+    "/"
+  )}</link>\n    <description>Personal blog</description>\n    ${items.join(
+    ""
+  )}\n  </channel>\n</rss>`;
+  return new Response(xml, {
+    headers: { "Content-Type": "application/rss+xml" },
+  });
 }
 
 function escapeXml(str: string) {
@@ -24,5 +35,3 @@ function escapeXml(str: string) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
 }
-
-
