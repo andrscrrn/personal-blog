@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const url = absoluteUrl(`/blog/${post.meta.slug}`);
   const publishedTime = new Date(post.meta.date).toISOString();
   const tags = post.meta.tags ?? [];
+  const ogImage = post.meta.image || "/globe.svg";
 
   return {
     title: post.meta.title,
@@ -41,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       tags,
       images: [
         {
-          url: "/globe.svg",
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: post.meta.title,
@@ -52,7 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title: post.meta.title,
       description: post.meta.description,
-      images: ["/globe.svg"],
+      images: [ogImage],
     },
   };
 }

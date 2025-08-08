@@ -7,10 +7,23 @@ export type PostMeta = {
   date: string;
   description: string;
   tags?: string[];
+  image?: string;
   slug: string;
 };
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
+const OG_DIR = path.join(process.cwd(), "public", "og");
+
+function getAutoOgImage(slug: string): string | undefined {
+  const candidates = [".png", ".jpg", ".jpeg", ".webp"];
+  for (const ext of candidates) {
+    const candidatePath = path.join(OG_DIR, `${slug}${ext}`);
+    if (fs.existsSync(candidatePath)) {
+      return `/og/${slug}${ext}`;
+    }
+  }
+  return undefined;
+}
 
 export async function getAllPosts(): Promise<PostMeta[]> {
   if (!fs.existsSync(POSTS_DIR)) return [];
@@ -21,11 +34,13 @@ export async function getAllPosts(): Promise<PostMeta[]> {
     const raw = fs.readFileSync(path.join(POSTS_DIR, file), "utf8");
     const { data } = matter(raw);
     const slug = file.replace(/\.(md|mdx)$/i, "");
+    const explicitImage = data.image ? String(data.image) : undefined;
     return {
       title: data.title ?? slug,
       date: data.date ?? new Date().toISOString(),
       description: data.description ?? "",
       tags: data.tags ?? [],
+      image: explicitImage ?? getAutoOgImage(slug),
       slug,
     } as PostMeta;
   });
@@ -43,11 +58,13 @@ export async function getPostBySlug(
   if (!filePath) return null;
   const raw = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(raw);
+  const explicitImage = data.image ? String(data.image) : undefined;
   const meta: PostMeta = {
     title: data.title ?? slug,
     date: data.date ?? new Date().toISOString(),
     description: data.description ?? "",
     tags: data.tags ?? [],
+    image: explicitImage ?? getAutoOgImage(slug),
     slug,
   };
   return { meta, content };
