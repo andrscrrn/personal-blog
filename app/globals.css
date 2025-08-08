@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* CSS variables for theming (HSL for Tailwind color usage) */
 :root {
@@ -46,13 +47,21 @@ body {
 
 /* prose tweaks */
 .prose {
-  @apply leading-relaxed;
+  @apply leading-relaxed prose-neutral dark:prose-invert;
 }
 
 .prose h1,
 .prose h2,
 .prose h3 {
   @apply font-semibold tracking-tight;
+}
+
+.prose h2 {
+  @apply mt-10 mb-4 text-2xl md:text-3xl;
+}
+
+.prose p {
+  @apply my-5;
 }
 
 /* headings: don't underline the autolink wrapper; only show subtle hover */
