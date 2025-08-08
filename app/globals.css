@@ -73,6 +73,16 @@ body {
   @apply text-foreground;
 }
 
+/* Hover effect on headings: only when they are links (wrapped by anchor) */
+.prose h1:hover .anchor,
+.prose h2:hover .anchor,
+.prose h3:hover .anchor,
+.prose h4:hover .anchor,
+.prose h5:hover .anchor,
+.prose h6:hover .anchor {
+  @apply text-primary;
+}
+
 .prose h2 {
   @apply mt-10 mb-4 text-2xl md:text-3xl;
 }
@@ -98,7 +108,8 @@ body {
 
 /* style appended heading anchors (from rehype-autolink-headings) */
 .prose .anchor {
-  @apply no-underline text-muted hover:text-primary;
+  /* The heading is wrapped by this anchor; inherit color to avoid muted look */
+  @apply no-underline text-inherit hover:text-primary;
 }
 
 .prose pre {
