@@ -15,6 +15,12 @@ export function Navbar() {
           >
             Blog
           </Link>
+          <Link
+            href="/about"
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            About
+          </Link>
           <ThemeToggle />
         </nav>
       </div>

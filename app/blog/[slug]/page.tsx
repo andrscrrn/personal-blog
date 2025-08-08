@@ -7,6 +7,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { Comments } from "@/components/Comments";
 import { absoluteUrl } from "@/lib/site";
 import type { Metadata } from "next";
+import { formatDate } from "@/lib/date";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -67,7 +68,10 @@ export default async function BlogPostPage({ params }: Props) {
         remarkPlugins: [remarkGfm],
         rehypePlugins: [
           rehypeSlug,
-          [rehypeAutolinkHeadings, { behavior: "wrap", properties: { className: ["anchor"] } }],
+          [
+            rehypeAutolinkHeadings,
+            { behavior: "wrap", properties: { className: ["anchor"] } },
+          ],
         ],
       },
     },
@@ -77,7 +81,7 @@ export default async function BlogPostPage({ params }: Props) {
       <article className="prose prose-lg max-w-prose mx-auto">
         <h1>{post.meta.title}</h1>
         <p className="!mt-0 text-sm text-muted-foreground">
-          <time>{new Date(post.meta.date).toLocaleDateString()}</time>
+          <time>{formatDate(post.meta.date)}</time>
         </p>
         {mdx.content}
       </article>

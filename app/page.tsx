@@ -1,16 +1,51 @@
 import Link from "next/link";
 import { getAllPosts } from "@/lib/posts";
+import { formatDate } from "@/lib/date";
 
 export default async function Home() {
   const posts = await getAllPosts();
   return (
     <div className="space-y-10">
-      <section className="text-center space-y-2">
-        <h1 className="text-4xl font-semibold tracking-tight">Welcome</h1>
+      <section className="text-center space-y-3">
+        <h1 className="text-4xl font-semibold tracking-tight">
+          Andres Carreño — Full‑stack engineer, frontend‑leaning
+        </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          A modern, minimal blog built with Next.js. Read the latest posts
-          below.
+          Based in Medellín, Colombia. I build polished UIs, integrate APIs, and
+          help shape product and technical direction.
         </p>
+        <p className="text-sm text-muted-foreground">
+          Currently: Americas Engineering Lead at{" "}
+          <a
+            href="https://withmoxie.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-dotted underline-offset-4"
+          >
+            Moxie
+          </a>
+        </p>
+        <div className="flex items-center justify-center gap-4 text-sm">
+          <a href="mailto:hello@andrescarreno.co" className="hover:underline">
+            Email
+          </a>
+          <a
+            href="https://www.linkedin.com/in/andrscrrn"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            LinkedIn
+          </a>
+          <a
+            href="https://github.com/andrscrrn"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            GitHub
+          </a>
+        </div>
       </section>
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold">Latest Posts</h2>
@@ -28,7 +63,7 @@ export default async function Home() {
                   {post.description}
                 </p>
                 <time className="text-xs text-muted-foreground">
-                  {new Date(post.date).toLocaleDateString()}
+                  {formatDate(post.date)}
                 </time>
               </Link>
             </li>
