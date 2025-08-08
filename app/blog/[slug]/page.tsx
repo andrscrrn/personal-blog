@@ -8,6 +8,7 @@ import { Comments } from "@/components/Comments";
 import { absoluteUrl } from "@/lib/site";
 import type { Metadata } from "next";
 import { formatDate } from "@/lib/date";
+import Image from "next/image";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -80,6 +81,18 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <div className="space-y-8">
       <article className="prose prose-lg max-w-prose mx-auto">
+        <div className="mb-6 -mx-4 sm:mx-0">
+          <div className="relative aspect-[1200/630] overflow-hidden rounded-xl border border-border">
+            <Image
+              src={post.meta.image ?? "/globe.svg"}
+              alt={post.meta.title}
+              fill
+              sizes="(min-width: 640px) 640px, 100vw"
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
         <h1>{post.meta.title}</h1>
         <p className="!mt-0 text-sm text-muted-foreground">
           <time>{formatDate(post.meta.date)}</time>

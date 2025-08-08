@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAllPosts } from "@/lib/posts";
 import { formatDate } from "@/lib/date";
+import Image from "next/image";
 
 export default async function Home() {
   const posts = await getAllPosts();
@@ -53,18 +54,29 @@ export default async function Home() {
           {posts.map((post) => (
             <li
               key={post.slug}
-              className="group rounded-xl border border-border bg-card p-5 hover:shadow-sm transition"
+              className="group rounded-xl border border-border bg-card hover:shadow-sm transition overflow-hidden"
             >
-              <Link href={`/blog/${post.slug}`} className="block space-y-2">
-                <h3 className="text-xl font-medium group-hover:text-primary transition-colors">
-                  {post.title}
-                </h3>
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {post.description}
-                </p>
-                <time className="text-xs text-muted-foreground">
-                  {formatDate(post.date)}
-                </time>
+              <Link href={`/blog/${post.slug}`} className="block">
+                <div className="relative aspect-[1200/630]">
+                  <Image
+                    src={post.image ?? "/globe.svg"}
+                    alt={post.title}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-5 space-y-2">
+                  <h3 className="text-xl font-medium group-hover:text-primary transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {post.description}
+                  </p>
+                  <time className="text-xs text-muted-foreground">
+                    {formatDate(post.date)}
+                  </time>
+                </div>
               </Link>
             </li>
           ))}
