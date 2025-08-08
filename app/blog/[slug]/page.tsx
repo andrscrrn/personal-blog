@@ -67,14 +67,7 @@ export default async function BlogPostPage({ params }: Props) {
         remarkPlugins: [remarkGfm],
         rehypePlugins: [
           rehypeSlug,
-          [
-            rehypeAutolinkHeadings,
-            {
-              behavior: "append",
-              properties: { className: ["anchor"] },
-              content: { type: "text", value: " #" },
-            },
-          ],
+          [rehypeAutolinkHeadings, { behavior: "wrap", properties: { className: ["anchor"] } }],
         ],
       },
     },
