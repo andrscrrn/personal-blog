@@ -7,6 +7,10 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 type Props = { params: Promise<{ slug: string }> };
 
+// Ensure this route is treated as fully static-only
+export const dynamic = "force-static";
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const slugs = await getAllSlugs();
   return slugs.map((slug) => ({ slug }));
