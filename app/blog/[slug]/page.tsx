@@ -67,14 +67,21 @@ export default async function BlogPostPage({ params }: Props) {
         remarkPlugins: [remarkGfm],
         rehypePlugins: [
           rehypeSlug,
-          [rehypeAutolinkHeadings, { behavior: "wrap" }],
+          [
+            rehypeAutolinkHeadings,
+            {
+              behavior: "append",
+              properties: { className: ["anchor"] },
+              content: { type: "text", value: " #" },
+            },
+          ],
         ],
       },
     },
   });
   return (
     <div className="space-y-8">
-      <article className="prose prose-zinc dark:prose-invert prose-lg mx-auto">
+      <article className="prose prose-zinc dark:prose-invert prose-lg max-w-2xl mx-auto prose-headings:font-semibold prose-h1:text-3xl md:prose-h1:text-4xl prose-h2:text-2xl md:prose-h2:text-3xl prose-h3:text-xl">
         <h1>{post.meta.title}</h1>
         <p className="!mt-0 text-sm text-muted-foreground">
           <time>{new Date(post.meta.date).toLocaleDateString()}</time>

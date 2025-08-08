@@ -46,7 +46,7 @@ body {
 
 /* prose tweaks */
 .prose {
-  @apply max-w-3xl leading-relaxed;
+  @apply leading-relaxed;
 }
 
 .prose h1,
@@ -67,6 +67,11 @@ body {
 
 .prose a {
   @apply text-primary underline underline-offset-4 hover:no-underline;
+}
+
+/* style appended heading anchors (from rehype-autolink-headings) */
+.prose .anchor {
+  @apply no-underline text-muted hover:text-primary;
 }
 
 .prose pre {
