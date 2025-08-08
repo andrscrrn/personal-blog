@@ -16,15 +16,7 @@ export default async function Home() {
           help shape product and technical direction.
         </p>
         <p className="text-sm text-muted-foreground">
-          Currently: Americas Engineering Lead at{" "}
-          <a
-            href="https://joinmoxie.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-dotted underline-offset-4"
-          >
-            Moxie
-          </a>
+          Currently: Team lead at a US-based startup
         </p>
         <div className="flex items-center justify-center gap-4 text-sm">
           <a href="mailto:hello@andrescarreno.co" className="hover:underline">
