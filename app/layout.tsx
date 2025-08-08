@@ -29,11 +29,20 @@ export const metadata: Metadata = {
     siteName: "Andres Carreño Blog",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/globe.svg",
+        width: 1200,
+        height: 630,
+        alt: "Andres Carreño Blog",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Andres Carreño Blog",
     description: "Thoughts, notes, and projects",
+    images: ["/globe.svg"],
   },
   icons: {
     icon: "/favicon.ico",

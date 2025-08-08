@@ -5,6 +5,8 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { Comments } from "@/components/Comments";
+import { absoluteUrl } from "@/lib/site";
+import type { Metadata } from "next";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -17,13 +19,40 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return {};
+  const url = absoluteUrl(`/blog/${post.meta.slug}`);
+  const publishedTime = new Date(post.meta.date).toISOString();
+  const tags = post.meta.tags ?? [];
+
   return {
     title: post.meta.title,
     description: post.meta.description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: post.meta.title,
+      description: post.meta.description,
+      publishedTime,
+      tags,
+      images: [
+        {
+          url: "/globe.svg",
+          width: 1200,
+          height: 630,
+          alt: post.meta.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.meta.title,
+      description: post.meta.description,
+      images: ["/globe.svg"],
+    },
   };
 }
 
