@@ -33,6 +33,24 @@ tags: [notes]
 Your content here...
 ```
 
+### Open Graph images per post
+
+- Place images in `public/og/` named after the post slug.
+- Preferred format: WebP. If you drop a JPG/PNG, run the optimizer and it will convert and resize.
+- Recommended size: 1200×630 px.
+
+Add to frontmatter (optional; auto-detected if the file exists):
+
+```md
+image: /og/my-first-post.webp
+```
+
+Optimize and update frontmatter automatically:
+
+```bash
+npm run optimize:og
+```
+
 ## Docs
 
 - Context: `CONTEXT.md`
