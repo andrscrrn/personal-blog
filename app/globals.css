@@ -4,12 +4,12 @@
 /* CSS variables for theming (HSL for Tailwind color usage) */
 :root {
   --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+  --foreground: 224 71% 4%; /* slightly darker for better contrast on white */
   --muted: 210 40% 96.1%;
   --border: 214.3 31.8% 91.4%;
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
+  --card-foreground: 224 71% 4%;
+  --primary: 221.2 83.2% 40%; /* reduce lightness for WCAG contrast */
   --primary-foreground: 210 40% 98%;
 }
 
@@ -20,7 +20,7 @@
   --border: 217.2 32.6% 17.5%;
   --card: 222.2 84% 4.9%;
   --card-foreground: 210 40% 98%;
-  --primary: 217.2 91.2% 59.8%;
+  --primary: 217.2 91.2% 60%;
   --primary-foreground: 222.2 47.4% 11.2%;
 }
 
@@ -48,6 +48,18 @@ body {
 /* prose tweaks */
 .prose {
   @apply leading-relaxed prose-neutral dark:prose-invert;
+  /* Ensure sufficient contrast in both themes using our design tokens */
+  --tw-prose-body: hsl(var(--foreground));
+  --tw-prose-headings: hsl(var(--foreground));
+  --tw-prose-bold: hsl(var(--foreground));
+  --tw-prose-links: hsl(var(--primary));
+  --tw-prose-hr: hsl(var(--border));
+  --tw-prose-quotes: hsl(var(--foreground));
+  --tw-prose-counters: hsl(var(--foreground));
+  --tw-prose-bullets: hsl(var(--foreground));
+  --tw-prose-code: hsl(var(--foreground));
+  --tw-prose-th-borders: hsl(var(--border));
+  --tw-prose-td-borders: hsl(var(--border));
 }
 
 .prose h1,
@@ -80,6 +92,7 @@ body {
 }
 
 .prose a {
+  /* Use higher-contrast link color and keep underline for accessibility */
   @apply text-primary underline underline-offset-4 hover:no-underline;
 }
 
