@@ -1,0 +1,79 @@
+---
+title: A Day of Airline Checkout Hell—and How GPT‑5 Helped Me Launch This Blog
+date: 2025-08-08
+description: What started as a simple plan to buy flights to Europe turned into checkout bugs, support calls, and—unexpectedly—the birth of this blog with a little help from GPT‑5.
+tags:
+  - travel
+  - airlines
+  - customer-support
+  - software-bugs
+  - AI
+  - GPT-5
+  - Next.js
+  - automation
+  - blogging
+---
+
+It’s late as I write this and I’m a bit tired, but today was one of those days that starts with a simple plan and ends with a whole story. I needed to buy flights to Europe for October. That turned into a marathon of checkout bugs with Air Europa and Avianca—and somehow ended with me launching this blog with GPT‑5 and Cursor.
+
+## Google Flights, then Air Europa
+
+I started on Google Flights to find the best options from Medellín to Spain (my first stop). The two main choices were Air Europa and Avianca. I went with Air Europa because the price was better. I jumped in from the Google Flights link and began the checkout flow.
+
+The site looked okay at first, but things got weird during checkout. I did manage to buy the first ticket—Medellín → Madrid—using my company card (a Ramp card). But I noticed the site was duplicating my second last name. For some reason, it kept showing my second surname twice.
+
+After clicking around with no success, I decided to call. To Air Europa’s credit, the support experience surprised me in a good way: from the website I could place a call from Colombia that seemed to connect to Spain, and it was super easy. The agent was friendly and fixed the duplicate-last-name issue quickly.
+
+## My wife’s ticket: déjà vu and checkout errors
+
+Next up was my wife’s ticket, this time with my personal card. Again, the name fields acted up—my second last name appeared after her first name even though I wasn’t typing it anywhere. And when I reached the final step, the checkout failed and threw me out.
+
+I called again and was told to try purchasing anyway and call back if the second-last-name issue reappeared. I tried again. The initial failed attempt had already blocked one of the seats, which was... interesting. I eventually completed the purchase, and yes—the last name was wrong again. Another call, another fix.
+
+## Madrid ↔ Kraków: more rough edges
+
+I also needed Madrid → Kraków and back. Those ended up being Ryanair and LOT Polish Airlines. The websites weren’t great either, but I got it done without too many details worth retelling here.
+
+## The return flights: where everything broke
+
+Buying the return tickets from Madrid back to Colombia was where everything truly fell apart. I first tried with my company card and hit a wall—nothing worked, no matter what I tried.
+
+Out of frustration, I switched to Avianca’s site. There, the checkout kept failing with a validation error right before payment, at the billing section. The billing address was in the United States (company card), but the form wouldn’t accept it. When I changed the billing address to a Colombian one, the validation passed—so the form was likely validating U.S. addresses incorrectly. Of course, the payment was then declined because the billing address didn’t match the card.
+
+By this point I was exhausted and pretty frustrated.
+
+## Meanwhile: GPT‑5 on TV, and the idea for a blog
+
+All of this was happening while I was in bed with my laptop, and on the TV I was watching videos about GPT‑5. The demos were impressive—especially how users no longer have to pick a model. That sparked a thought: I needed to vent somewhere. A blog would be perfect.
+
+So I opened Cursor and asked GPT‑5 to set up a static Next.js blog from scratch that I could deploy to GitHub Pages and later wire up to my own domain. What surprised me was how it planned everything step by step and just… kept going. It felt more deliberate than previous models.
+
+I let it work in the background and decided to try ChatGPT’s Agent Mode to purchase the tickets. To my surprise, the agent managed to buy my ticket—something I hadn’t been able to do. I suspect the environment it was running in rendered a slightly different checkout form. I tried again for my wife’s ticket (twice) and it didn’t work.
+
+## Calling again: unlocking seats, currencies, and phone payments
+
+I called Air Europa again. Before I spoke with the person who really helped, another agent sent me a payment link—some things were adjusted—but it still didn’t work.
+
+Then I spoke with Juan Sebastián. We dove into a long process and uncovered several issues. One of them: the system kept pricing my payments in euros instead of Colombian pesos, which might have been part of the problem. He changed that and confirmed my details. Another fascinating detail: all my previous attempts had blocked multiple seats, but he could unlock them from his system. Their internal tools are clearly more capable than the public site.
+
+We tried processing the payment by phone—which made me a bit nervous, since I’d never done that. I had to enter the card details via my phone’s keypad. At one point, the call I’d placed from the browser got weird audio and seemed to drop, so the agent called me on my cell. The first phone payment attempt failed, possibly because of the amount.
+
+Our last idea: split the total into three separate charges. That worked. It was annoying—we had to enter the details three times and even hang up and redial—but it finally went through. Soon after, the tickets arrived.
+
+## Back to the blog: automating the rest
+
+While all of this was going on, GPT‑5 with Cursor kept building out the blog. I even asked it to push changes to GitHub through a CLI so I wouldn’t have to do everything via the website. The last step was setting up my custom domain, `blog.andrescarreno.co`, via Squarespace. There’s no real CLI or API for Squarespace, so I wrote detailed instructions and used Agent Mode again. It handled the setup surprisingly well. I still had to log in at a few points, but otherwise it worked, and I could keep half-watching TV while it chugged along.
+
+## What I learned
+
+- GPT‑5, especially with agents, can be startlingly effective at multi-step tasks.
+- Great customer support can solve things that a broken website can’t. Internal systems matter.
+- Form validation bugs are not “small.” They can block entire purchases.
+- Automation isn’t magic—but it frees you to focus elsewhere while it grinds through the boring parts.
+- You can spin up a modern static blog in an evening if you embrace the tools.
+
+## Why this post exists
+
+So here we are. Today was messy and frustrating, but also full of unexpected wins. GPT‑5 helped me create this space. Air Europa’s human support came through when the website didn’t. And I learned (again) that sometimes the best stories come from the worst UX.
+
+If you made it this far, thanks for reading. Maybe someone finds this useful—or maybe it’s just for me. Either way, it felt good to write.
