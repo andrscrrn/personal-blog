@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getAllSlugs, getPostBySlug } from "@/lib/posts";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -60,6 +60,18 @@ export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
+  const mdx = await compileMDX({
+    source: post.content,
+    options: {
+      mdxOptions: {
+        remarkPlugins: [remarkGfm],
+        rehypePlugins: [
+          rehypeSlug,
+          [rehypeAutolinkHeadings, { behavior: "wrap" }],
+        ],
+      },
+    },
+  });
   return (
     <div className="space-y-8">
       <article className="prose prose-zinc dark:prose-invert">
@@ -67,18 +79,7 @@ export default async function BlogPostPage({ params }: Props) {
         <p className="!mt-0 text-sm text-muted-foreground">
           <time>{new Date(post.meta.date).toLocaleDateString()}</time>
         </p>
-        <MDXRemote
-          source={post.content}
-          options={{
-            mdxOptions: {
-              remarkPlugins: [remarkGfm],
-              rehypePlugins: [
-                rehypeSlug,
-                [rehypeAutolinkHeadings, { behavior: "wrap" }],
-              ],
-            },
-          }}
-        />
+        {mdx.content}
       </article>
       <Comments />
     </div>
