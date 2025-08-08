@@ -17,7 +17,7 @@ export default async function Home() {
         <p className="text-sm text-muted-foreground">
           Currently: Americas Engineering Lead at{" "}
           <a
-            href="https://withmoxie.com"
+            href="https://joinmoxie.com"
             target="_blank"
             rel="noopener noreferrer"
             className="underline decoration-dotted underline-offset-4"
