@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/Navbar";
+import { Analytics } from "@/components/Analytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +16,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "My Blog",
+  metadataBase: new URL("https://blog.andrescarreno.co"),
+  title: {
+    default: "Andres Carreño Blog",
+    template: "%s • Andres Carreño Blog",
+  },
   description: "Thoughts, notes, and projects",
+  openGraph: {
+    title: "Andres Carreño Blog",
+    description: "Thoughts, notes, and projects",
+    url: "/",
+    siteName: "Andres Carreño Blog",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Andres Carreño Blog",
+    description: "Thoughts, notes, and projects",
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -33,6 +54,7 @@ export default function RootLayout({
             <main className="container mx-auto px-4 py-8">{children}</main>
           </div>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
