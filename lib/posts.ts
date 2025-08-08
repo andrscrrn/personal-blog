@@ -15,7 +15,7 @@ const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 const OG_DIR = path.join(process.cwd(), "public", "og");
 
 function getAutoOgImage(slug: string): string | undefined {
-  const candidates = [".png", ".jpg", ".jpeg", ".webp"];
+  const candidates = [".webp", ".png", ".jpg", ".jpeg"];
   for (const ext of candidates) {
     const candidatePath = path.join(OG_DIR, `${slug}${ext}`);
     if (fs.existsSync(candidatePath)) {
