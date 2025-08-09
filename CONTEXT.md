@@ -9,7 +9,7 @@ Purpose: Personal blog with static export for free hosting on GitHub Pages, cust
 - Theming: `next-themes` (class-based dark mode)
 - MDX rendering: `next-mdx-remote/rsc` with `remark-gfm`, `rehype-slug`, `rehype-autolink-headings`
 - Hosting: GitHub Pages (workflow in `.github/workflows/deploy.yml`)
-- Domain: `blog.andrescarreno.co` (Squarespace DNS) with `public/CNAME`
+- Domain: `andrescarreno.co` (Squarespace DNS) with `public/CNAME`
 - Analytics: GA4 via `NEXT_PUBLIC_GA_ID`
 - Comments: Giscus (optional) via `NEXT_PUBLIC_GISCUS_*`
 
@@ -32,10 +32,10 @@ Purpose: Personal blog with static export for free hosting on GitHub Pages, cust
 - Deploy: GitHub Actions workflow “Deploy to GitHub Pages” publishes `out/`
 
 ## Operational vars
-- `NEXT_PUBLIC_SITE_URL`: canonical site (currently `https://blog.andrescarreno.co`)
+- `NEXT_PUBLIC_SITE_URL`: canonical site (currently `https://andrescarreno.co`)
 - `NEXT_PUBLIC_GA_ID`: GA4 measurement ID (format `G-XXXXXXXXXX`)
 - Giscus (optional): `NEXT_PUBLIC_GISCUS_REPO`, `NEXT_PUBLIC_GISCUS_REPO_ID`, `NEXT_PUBLIC_GISCUS_CATEGORY`, `NEXT_PUBLIC_GISCUS_CATEGORY_ID`
 
 ## Domain modes
-- Custom domain (current): `public/CNAME` = `blog.andrescarreno.co`; leave `NEXT_PUBLIC_BASE_PATH` empty
+- Custom domain (current): `public/CNAME` = `andrescarreno.co`; leave `NEXT_PUBLIC_BASE_PATH` empty
 - Project page (alternative): set `NEXT_PUBLIC_BASE_PATH=/REPO_NAME` and remove `public/CNAME`

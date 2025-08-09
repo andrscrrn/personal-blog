@@ -21,7 +21,7 @@
 
 ## Variables
 
-- `NEXT_PUBLIC_SITE_URL` (e.g., `https://blog.andrescarreno.co`)
+- `NEXT_PUBLIC_SITE_URL` (e.g., `https://andrescarreno.co`)
 - `NEXT_PUBLIC_GA_ID` (GA4)
 - Giscus (comments): `NEXT_PUBLIC_GISCUS_REPO`, `NEXT_PUBLIC_GISCUS_REPO_ID`, `NEXT_PUBLIC_GISCUS_CATEGORY`, `NEXT_PUBLIC_GISCUS_CATEGORY_ID`
 

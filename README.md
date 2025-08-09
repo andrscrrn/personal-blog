@@ -1,6 +1,6 @@
 # Personal Blog (Next.js + MDX + GitHub Pages)
 
-Live site: https://blog.andrescarreno.co
+Live site: https://andrescarreno.co
 
 [![Deploy to GitHub Pages](https://github.com/andrscrrn/personal-blog/actions/workflows/deploy.yml/badge.svg)](https://github.com/andrscrrn/personal-blog/actions/workflows/deploy.yml)
 

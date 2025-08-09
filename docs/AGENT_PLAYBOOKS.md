@@ -4,7 +4,7 @@
 1. Open https://analytics.google.com (correct account).
 2. Admin → Create Property (GA4): name "Blog – andrescarreno.co".
 3. Data Streams → Web → Add stream:
-   - URL: https://blog.andrescarreno.co
+   - URL: https://andrescarreno.co
    - Name: Website
    - Enhanced measurement: ON
 4. Copy "Measurement ID" (G-XXXXXXXXXX). Return it to the user.

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://blog.andrescarreno.co"),
+  metadataBase: new URL("https://andrescarreno.co"),
   title: {
     default: "Andres Carreño Blog",
     template: "%s • Andres Carreño Blog",
