@@ -7,7 +7,7 @@ export function getSiteUrl(): string {
   if (prefix && prefix.startsWith("/")) {
     return `https://andrscrrn.github.io${prefix}`;
   }
-  return "https://blog.andrescarreno.co";
+  return "https://andrescarreno.co";
 }
 
 export function absoluteUrl(pathname: string): string {
@@ -15,5 +15,3 @@ export function absoluteUrl(pathname: string): string {
   const path = pathname.startsWith("/") ? pathname : `/${pathname}`;
   return `${base}${path}`;
 }
-
-
