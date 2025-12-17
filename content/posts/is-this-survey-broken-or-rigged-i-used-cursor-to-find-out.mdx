@@ -1,0 +1,137 @@
+---
+title: Is This Survey Broken or Rigged? I Used Cursor to Find Out
+date: 2025-12-17T00:00:00.000Z
+description: >-
+  A car purchase, an unauthorized insurance charge, and a customer satisfaction
+  survey that wouldn't accept negative feedback. I downloaded the code and used
+  Cursor to investigate.
+tags:
+  - ux
+  - bugs
+  - css
+  - hubspot
+  - nps
+  - cursor
+  - customer-experience
+  - debugging
+  - santander
+---
+
+I recently bought a new car: a Volkswagen Polo, model year 2026.
+
+I'd been looking at several options, but the Polo really stood out. It's built in Brazil, and I've always had a certain affinity with the Volkswagen Group—I like their cars, I'm familiar with them, and it felt like a solid choice. After doing my research, I decided to move forward. The car was available, I liked it, and I was ready to buy.
+
+## The Financing Trap
+
+As part of the process, I explored financing options with different advisors. After comparing alternatives, Banco Santander came up as the best option. They were offering some very attractive interest rates, especially for the first few months of the loan. My idea—still my idea, actually—was to take advantage of those initial rates and then refinance later with another bank. Finding a rate that competitive again would be hard, but the plan was simply not to keep the Santander loan beyond the seventh month.
+
+The process moved forward. The car purchase itself had its own issues with the dealership, but that's another story for another day. What I want to focus on here is my experience with Banco Santander.
+
+Once the loan was finally disbursed, I noticed something unexpected: an insurance product had been added to my credit without my consent. I went back to the contract, reviewed it carefully, and couldn't find any section where I had agreed to that insurance. That's where the first real frustrations started.
+
+There were several other issues along the way, which I won't go into detail here. But the moment that truly caught my attention came later, in a much more subtle way.
+
+## The Suspicious Survey
+
+A few days after everything was finalized, I received an email from Santander asking me to complete a customer satisfaction survey. It included a standard Net Promoter Score (NPS) question, asking me to rate my experience on a scale from 0 to 10.
+
+Here's where things got interesting.
+
+When I tried to fill out the survey, I noticed that if I selected any score between 0 and 6, the survey wouldn't let me select any follow-up options. I simply couldn't provide reasons for my dissatisfaction. The radio buttons appeared, but clicking on them produced no visual feedback—no checkmark, nothing. It felt like the inputs were broken or disabled.
+
+However, if I selected a score between 7 and 10, everything worked perfectly: I could choose options, provide feedback, and complete the survey without any issues.
+
+At first glance, this felt suspicious. It almost looked as if the survey was intentionally designed to discourage negative feedback. If users with low scores can't properly submit or explain their dissatisfaction, the data will naturally skew more positive. On paper, it would look like customers are less unhappy than they actually are—not because they're satisfied, but because they can't complain properly.
+
+That curiosity pushed me to dig deeper.
+
+## Enter Cursor
+
+I decided to download the survey page and analyze it locally. I saved the HTML along with all its assets—CSS files, JavaScript, images—and opened the folder in [Cursor](https://www.cursor.com).
+
+My first instinct was to ask Cursor's agent to help me understand what was going on. I described the behavior: "When I select a score between 0-6, a follow-up field appears but I can't select any options. When I select 7-8, a similar field appears and it works fine. Why?"
+
+Cursor started exploring the codebase. It looked at the HTML structure, identified the field names, and then dove into the CSS. Within minutes, it found something interesting.
+
+The survey was using custom-styled radio buttons. Instead of the browser's default radio inputs, the CSS was hiding them with `appearance: none` and rendering a custom checkmark using the `::before` pseudo-element when an input was selected. This is a common pattern for creating visually consistent forms across browsers.
+
+Here's where the bug was hiding. The CSS rule that displays the checkmark looked like this:
+
+```css
+.hs-form-checkbox-display input:checked::before, 
+.hs_buena_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo .hs-form-radio-display input:checked::before,
+.hs_mala_experiencia___nivel_de_satisfaccion_en_asesoria_y_servicio .hs-form-radio-display input:checked::before,
+.hs_mala_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo___7_y_8 .hs-form-radio-display input:checked::before
+{
+   content: '\2713'; 
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   transform: translate(-50%, -50%);
+   color: #ef2c2c;
+   font-size: 18px;
+   font-weight: 800;
+}
+```
+
+Notice something? There are selectors for the "good experience" field, for "satisfaction level," and for the 7-8 score range field. But the selector for the 0-6 score range field—`hs_mala_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo_0_a_6`—was missing.
+
+The field was actually working. The inputs were receiving clicks, the values were being captured by HubSpot's JavaScript, and the form could technically be submitted. But because the CSS selector was omitted, no checkmark appeared when you clicked an option. It *looked* broken, even though it wasn't.
+
+## A Bug, Not a Conspiracy
+
+Cursor helped me confirm this was a bug, not an intentional design decision. The evidence was clear:
+
+1. The 0-6 field was correctly included in other CSS rules—input box styling, row backgrounds, flex layouts. Only the `:checked::before` rule was forgotten.
+2. When I inspected the hidden `hs_context` field in the form, I could see that clicking options in the 0-6 field was actually updating the form state. HubSpot's JavaScript was capturing selections correctly.
+3. Injecting the missing CSS via the browser console immediately fixed the visual issue.
+
+The fix was simple—just adding one more selector:
+
+```css
+.hs_mala_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo_0_a_6 .hs-form-radio-display input:checked::before
+```
+
+## Finally, I Could Complain
+
+Once I understood the problem, I opened the browser console and injected a quick CSS fix:
+
+```javascript
+const style = document.createElement('style');
+style.textContent = `
+  .hs_mala_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo_0_a_6 
+  .hs-form-radio-display input:checked::before {
+    content: '\\2713';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #ef2c2c;
+    font-size: 18px;
+    font-weight: 800;
+  }
+`;
+document.head.appendChild(style);
+```
+
+Suddenly, the checkmarks appeared. I could finally see my selections, complete the survey properly, and submit my feedback about the unauthorized insurance and the other issues I'd experienced.
+
+## The Uncomfortable Truth
+
+Here's the thing: even if this is "just a bug," the outcome is the same.
+
+The lowest scores—where frustration and dissatisfaction are most likely to be expressed—are precisely the ones where feedback becomes harder or impossible to submit properly. Users who are unhappy enough to give a 0-6 score are met with a form that appears broken. Some will give up. Some will assume their feedback won't be recorded. Some might even bump their score up to 7 just to make the form work.
+
+And that has real consequences. It affects how the data looks, how performance is measured internally, and how problems are surfaced to decision-makers. If your NPS dashboard shows mostly 7+ scores with detailed feedback, and 0-6 scores with sparse or no feedback, you might conclude that unhappy customers just don't have much to say—when in reality, they couldn't say it.
+
+Whether intentional or not, it's a curious coincidence that the bug happens exactly where negative feedback matters the most.
+
+## What I Learned
+
+- **Cursor is genuinely useful for this kind of detective work.** I described the behavior, and it systematically explored HTML, CSS, and JavaScript until it found the root cause. What might have taken me an hour of manual inspection took minutes.
+- **"Broken" doesn't always mean broken.** The form was capturing data correctly—it just wasn't showing it. This is a good reminder to check the actual state of things, not just the visual appearance.
+- **UX bugs can have ethical implications.** A missing CSS selector might seem trivial, but when it systematically affects one group of users (the unhappy ones), the impact is anything but trivial.
+- **Always dig deeper when something feels off.** My initial suspicion was that the survey was rigged. It wasn't—but the investigation was worth it anyway.
+
+And yes, I finally got to submit my complaint. Whether anyone at Santander reads it is another story.
+
