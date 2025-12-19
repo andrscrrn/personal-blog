@@ -3,8 +3,8 @@ title: Is This Survey Broken or Rigged? I Used Cursor to Find Out
 date: 2025-12-17T00:00:00.000Z
 description: >-
   A car purchase, an unauthorized insurance charge, and a customer satisfaction
-  survey that wouldn't accept negative feedback. I downloaded the code and used
-  Cursor to investigate.
+  survey that gave no visual feedback for negative scores. I downloaded the code
+  and used Cursor to investigate.
 tags:
   - ux
   - bugs
@@ -38,11 +38,11 @@ A few days after everything was finalized, I received an email from Santander as
 
 Here's where things got interesting.
 
-When I tried to fill out the survey, I noticed that if I selected any score between 0 and 6, the survey wouldn't let me select any follow-up options. I simply couldn't provide reasons for my dissatisfaction. The radio buttons appeared, but clicking on them produced no visual feedback—no checkmark, nothing. It felt like the inputs were broken or disabled.
+When I tried to fill out the survey, I noticed that if I selected any score between 0 and 6, clicking on the follow-up options produced no visual feedback whatsoever. No checkmark, no highlight, nothing. From my perspective, the clicks simply weren't registering. It felt like the inputs were broken or disabled.
 
-However, if I selected a score between 7 and 10, everything worked perfectly: I could choose options, provide feedback, and complete the survey without any issues.
+However, if I selected a score between 7 and 10, the experience was completely different: clicking an option would display a visible checkmark, confirming my selection. The form behaved exactly as expected.
 
-At first glance, this felt suspicious. It almost looked as if the survey was intentionally designed to discourage negative feedback. If users with low scores can't properly submit or explain their dissatisfaction, the data will naturally skew more positive. On paper, it would look like customers are less unhappy than they actually are—not because they're satisfied, but because they can't complain properly.
+At first glance, this felt suspicious. It almost looked as if the survey was intentionally designed to discourage negative feedback. If users with low scores see no visual confirmation of their selections, many will assume the form is broken and give up. Some might even bump their score up to 7 just to get visual feedback. Either way, the data would naturally skew more positive—not because customers are satisfied, but because they can't tell if their dissatisfaction is being recorded.
 
 That curiosity pushed me to dig deeper.
 
@@ -50,7 +50,7 @@ That curiosity pushed me to dig deeper.
 
 I decided to download the survey page and analyze it locally. I saved the HTML along with all its assets—CSS files, JavaScript, images—and opened the folder in [Cursor](https://www.cursor.com).
 
-My first instinct was to ask Cursor's agent to help me understand what was going on. I described the behavior: "When I select a score between 0-6, a follow-up field appears but I can't select any options. When I select 7-8, a similar field appears and it works fine. Why?"
+My first instinct was to ask Cursor's agent to help me understand what was going on. I described the behavior: "When I select a score between 0-6, a follow-up field appears but clicking on the options produces no visual change. When I select 7-8, a similar field appears and clicking shows a checkmark. Why?"
 
 Cursor started exploring the codebase. It looked at the HTML structure, identified the field names, and then dove into the CSS. Within minutes, it found something interesting.
 
@@ -59,33 +59,40 @@ The survey was using custom-styled radio buttons. Instead of the browser's defau
 Here's where the bug was hiding. The CSS rule that displays the checkmark looked like this:
 
 ```css
-.hs-form-checkbox-display input:checked::before, 
-.hs_buena_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo .hs-form-radio-display input:checked::before,
-.hs_mala_experiencia___nivel_de_satisfaccion_en_asesoria_y_servicio .hs-form-radio-display input:checked::before,
-.hs_mala_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo___7_y_8 .hs-form-radio-display input:checked::before
-{
-   content: '\2713'; 
-   position: absolute;
-   left: 50%;
-   top: 50%;
-   transform: translate(-50%, -50%);
-   color: #ef2c2c;
-   font-size: 18px;
-   font-weight: 800;
+.hs-form-checkbox-display input:checked::before,
+.hs_buena_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo
+  .hs-form-radio-display
+  input:checked::before,
+.hs_mala_experiencia___nivel_de_satisfaccion_en_asesoria_y_servicio
+  .hs-form-radio-display
+  input:checked::before,
+.hs_mala_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo___7_y_8
+  .hs-form-radio-display
+  input:checked::before {
+  content: "\2713";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #ef2c2c;
+  font-size: 18px;
+  font-weight: 800;
 }
 ```
 
 Notice something? There are selectors for the "good experience" field, for "satisfaction level," and for the 7-8 score range field. But the selector for the 0-6 score range field—`hs_mala_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo_0_a_6`—was missing.
 
-The field was actually working. The inputs were receiving clicks, the values were being captured by HubSpot's JavaScript, and the form could technically be submitted. But because the CSS selector was omitted, no checkmark appeared when you clicked an option. It *looked* broken, even though it wasn't.
+Here's the crucial part: the field was actually working. The inputs were receiving clicks, the internal state was updating correctly, the values were being captured by HubSpot's JavaScript, and the form could be submitted with valid data. But because the CSS selector was omitted, no checkmark appeared when you clicked an option. The functional state was correct, but the visual state was not reflecting it. From a user's perspective, the clicks appeared to do nothing.
 
 ## A Bug, Not a Conspiracy
 
-Cursor helped me confirm this was a bug, not an intentional design decision. The evidence was clear:
+Cursor helped me confirm this was a CSS bug, not an intentional design decision. The evidence was clear:
 
 1. The 0-6 field was correctly included in other CSS rules—input box styling, row backgrounds, flex layouts. Only the `:checked::before` rule was forgotten.
-2. When I inspected the hidden `hs_context` field in the form, I could see that clicking options in the 0-6 field was actually updating the form state. HubSpot's JavaScript was capturing selections correctly.
-3. Injecting the missing CSS via the browser console immediately fixed the visual issue.
+2. When I inspected the hidden `hs_context` field in the form, I could see that clicking options in the 0-6 field was actually updating the form state. HubSpot's JavaScript was capturing selections correctly—the internal state was changing, just without any visual feedback.
+3. Injecting the missing CSS via the browser console immediately fixed the visual issue, confirming that the problem was purely presentational.
+
+This is a particularly insidious type of bug: the form was functionally correct. Unit tests checking that clicks update the form state would pass. Basic end-to-end tests verifying that the form submits with the correct data would pass. Only visual regression testing—or a human actually looking at the screen—would catch this.
 
 The fix was simple—just adding one more selector:
 
@@ -98,7 +105,7 @@ The fix was simple—just adding one more selector:
 Once I understood the problem, I opened the browser console and injected a quick CSS fix:
 
 ```javascript
-const style = document.createElement('style');
+const style = document.createElement("style");
 style.textContent = `
   .hs_mala_experiencia___dispuesto_a_recomendar_el_credito_de_vehiculo_0_a_6 
   .hs-form-radio-display input:checked::before {
@@ -115,24 +122,23 @@ style.textContent = `
 document.head.appendChild(style);
 ```
 
-Suddenly, the checkmarks appeared. I could finally see my selections, complete the survey properly, and submit my feedback about the unauthorized insurance and the other issues I'd experienced.
+Suddenly, the checkmarks appeared. I could finally see my selections being registered. In truth, the form had been capturing my clicks all along—I just couldn't tell. Now, with visual confirmation, I could complete the survey with confidence and submit my feedback about the unauthorized insurance and the other issues I'd experienced.
 
 ## The Uncomfortable Truth
 
 Here's the thing: even if this is "just a bug," the outcome is the same.
 
-The lowest scores—where frustration and dissatisfaction are most likely to be expressed—are precisely the ones where feedback becomes harder or impossible to submit properly. Users who are unhappy enough to give a 0-6 score are met with a form that appears broken. Some will give up. Some will assume their feedback won't be recorded. Some might even bump their score up to 7 just to make the form work.
+The lowest scores—where frustration and dissatisfaction are most likely to be expressed—are precisely the ones where users receive no visual confirmation that their feedback is being recorded. Users who are unhappy enough to give a 0-6 score are met with a form that appears unresponsive. Some will give up. Some will assume their clicks aren't registering. Some might even bump their score up to 7 just to see a checkmark appear.
 
-And that has real consequences. It affects how the data looks, how performance is measured internally, and how problems are surfaced to decision-makers. If your NPS dashboard shows mostly 7+ scores with detailed feedback, and 0-6 scores with sparse or no feedback, you might conclude that unhappy customers just don't have much to say—when in reality, they couldn't say it.
+And that has real consequences. It affects how the data looks, how performance is measured internally, and how problems are surfaced to decision-makers. If your NPS dashboard shows mostly 7+ scores with detailed feedback, and 0-6 scores with sparse or no feedback, you might conclude that unhappy customers just don't have much to say—when in reality, they had no way to tell if their voice was being heard.
 
 Whether intentional or not, it's a curious coincidence that the bug happens exactly where negative feedback matters the most.
 
 ## What I Learned
 
-- **Cursor is genuinely useful for this kind of detective work.** I described the behavior, and it systematically explored HTML, CSS, and JavaScript until it found the root cause. What might have taken me an hour of manual inspection took minutes.
-- **"Broken" doesn't always mean broken.** The form was capturing data correctly—it just wasn't showing it. This is a good reminder to check the actual state of things, not just the visual appearance.
-- **UX bugs can have ethical implications.** A missing CSS selector might seem trivial, but when it systematically affects one group of users (the unhappy ones), the impact is anything but trivial.
-- **Always dig deeper when something feels off.** My initial suspicion was that the survey was rigged. It wasn't—but the investigation was worth it anyway.
+- **Visual state and functional state are not the same thing.** The form was working correctly at the data layer—clicks were registering, state was updating, and submissions would have been valid. But from the user's perspective, nothing was happening. This disconnect between what the system knows and what the user sees is a critical blind spot.
+- **Unit tests and basic E2E tests would not catch this bug.** A test that clicks a radio button and checks if the form state updates would pass. A test that submits the form and verifies the payload would pass. The bug was purely visual—the `:checked` state was correct, but the CSS rule to display it was missing. Only visual regression testing or screenshot-based tests would have caught this immediately.
+- **Lack of visual feedback can distort metrics like NPS.** When users can't see confirmation that their input was recorded, they behave differently. They abandon forms, retry clicks, or change their answers just to get a response. A bug like this doesn't just frustrate users—it systematically skews the data toward the scores that happen to have working visual feedback.
+- **UX bugs can have ethical implications.** A missing CSS selector might seem trivial, but when it systematically affects one group of users (the unhappy ones), the impact is anything but trivial. Whether intentional or not, the outcome is the same: negative feedback becomes harder to submit.
 
 And yes, I finally got to submit my complaint. Whether anyone at Santander reads it is another story.
-
