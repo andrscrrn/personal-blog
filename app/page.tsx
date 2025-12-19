@@ -9,14 +9,14 @@ export default async function Home() {
     <div className="space-y-10">
       <section className="text-center space-y-3">
         <h1 className="text-4xl font-semibold tracking-tight">
-          Andres Carreño — Full‑stack engineer, frontend‑leaning
+          Andres Carreño — Engineering Manager
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Based in Medellín, Colombia. I build polished UIs, integrate APIs, and
-          help shape product and technical direction.
+          Based in Medellín, Colombia. Leading distributed teams, staying close
+          to technical and product decisions, with a frontend focus.
         </p>
         <p className="text-sm text-muted-foreground">
-          Currently: Team lead at a US-based startup
+          Currently: Engineering Manager at a US-based startup
         </p>
         <div className="flex items-center justify-center gap-4 text-sm">
           <a href="mailto:hello@andrescarreno.co" className="hover:underline">
