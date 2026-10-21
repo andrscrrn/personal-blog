@@ -244,14 +244,45 @@ a {
   background-size: 100% 1px;
 }
 
-/* Post titles nudge right on hover */
-.post-link {
-  display: inline-block;
-  transition: transform 0.3s cubic-bezier(0.2, 0.6, 0.2, 1), color 0.2s ease;
+/* List rows are one link: hovering anywhere reacts as a whole */
+.post-text {
+  transition: transform 0.3s cubic-bezier(0.2, 0.6, 0.2, 1);
 }
 
-.post-link:hover {
+.post-link {
+  transition: color 0.2s ease;
+}
+
+.post-row .meta-label {
+  transition: color 0.2s ease;
+}
+
+.post-thumb {
+  display: block;
+}
+
+.post-thumb img {
+  transition: transform 0.45s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+.post-row:hover .post-text,
+.post-row:focus-visible .post-text {
   transform: translateX(6px);
+}
+
+.post-row:hover .post-link,
+.post-row:focus-visible .post-link {
+  color: var(--link-hover);
+}
+
+.post-row:hover .meta-label,
+.post-row:focus-visible .meta-label {
+  color: var(--secondary);
+}
+
+.post-row:hover .post-thumb img,
+.post-row:focus-visible .post-thumb img {
+  transform: scale(1.09);
 }
 
 /* Back arrow nudges left on hover */
@@ -285,7 +316,16 @@ html {
     transition: none;
   }
 
-  .post-link:hover,
+  .post-text,
+  .post-thumb img,
+  .post-row .meta-label {
+    transition: none;
+  }
+
+  .post-row:hover .post-text,
+  .post-row:focus-visible .post-text,
+  .post-row:hover .post-thumb img,
+  .post-row:focus-visible .post-thumb img,
   .back-link:hover .arrow {
     transform: none;
   }
