@@ -10,10 +10,16 @@ export function SiteHeader() {
         Andres Carreño
       </Link>
       <nav className="flex gap-6 text-[14px] italic">
-        <Link href="/blog" className="text-secondary hover:text-foreground">
+        <Link
+          href="/blog"
+          className="link-underline text-secondary hover:text-foreground"
+        >
           Blog
         </Link>
-        <Link href="/about" className="text-secondary hover:text-foreground">
+        <Link
+          href="/about"
+          className="link-underline text-secondary hover:text-foreground"
+        >
           About
         </Link>
       </nav>

@@ -11,10 +11,10 @@ export default async function BlogIndexPage() {
   const posts = await getAllPosts();
   return (
     <div className="flex flex-1 flex-col">
-      <h1 className="mb-10 text-[32px] font-normal leading-[1.2] tracking-[-0.01em]">
+      <h1 className="fade-up mb-10 text-[32px] font-normal leading-[1.2] tracking-[-0.01em]">
         All posts
       </h1>
-      <PostList posts={posts} />
+      <PostList posts={posts} delayStart={90} />
       <SiteFooter />
     </div>
   );

@@ -91,32 +91,50 @@ export default async function BlogPostPage({ params }: Props) {
     <div className="flex flex-1 flex-col">
       <article className="mb-16">
         <header>
-          <p className="meta-label mb-4">
+          <p className="fade-up meta-label mb-4">
             <time dateTime={new Date(post.meta.date).toISOString()}>
               {formatDate(post.meta.date)}
             </time>
             {" · "}
             {minutes} min read
           </p>
-          <h1 className="mb-8 text-[34px] font-normal leading-[1.2] tracking-[-0.01em] sm:text-[44px]">
+          <h1
+            className="fade-up mb-8 text-[34px] font-normal leading-[1.2] tracking-[-0.01em] sm:text-[44px]"
+            style={{ "--delay": "80ms" } as React.CSSProperties}
+          >
             {post.meta.title}
           </h1>
           {post.meta.description ? (
-            <p className="mb-12 text-[20px] italic leading-[1.6] text-secondary">
+            <p
+              className="fade-up mb-12 text-[20px] italic leading-[1.6] text-secondary"
+              style={{ "--delay": "160ms" } as React.CSSProperties}
+            >
               {post.meta.description}
             </p>
           ) : null}
-          <div className="mb-12 border-t border-hairline" aria-hidden="true" />
+          <div
+            className="fade-up mb-12 border-t border-hairline"
+            style={{ "--delay": "240ms" } as React.CSSProperties}
+            aria-hidden="true"
+          />
         </header>
-        <div className="post-body">{mdx.content}</div>
+        <div
+          className="fade-up post-body"
+          style={{ "--delay": "300ms" } as React.CSSProperties}
+        >
+          {mdx.content}
+        </div>
       </article>
       <Comments />
       <footer className="mt-auto flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 border-t border-hairline pt-8 pb-14">
         <Link
           href="/"
-          className="text-[15px] italic text-secondary hover:text-foreground"
+          className="back-link text-[15px] italic text-secondary hover:text-foreground"
         >
-          ← All posts
+          <span className="arrow" aria-hidden="true">
+            ←
+          </span>{" "}
+          All posts
         </Link>
         <SocialLinks />
       </footer>

@@ -8,7 +8,7 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <div className="flex flex-1 flex-col">
-      <h1 className="mb-8 text-[32px] font-normal leading-[1.2] tracking-[-0.01em]">
+      <h1 className="fade-up mb-8 text-[32px] font-normal leading-[1.2] tracking-[-0.01em]">
         About
       </h1>
       <div className="post-body">
