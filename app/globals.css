@@ -1,125 +1,192 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
 
-/* CSS variables for theming (HSL for Tailwind color usage) */
+/* Editorial design tokens */
 :root {
-  --background: 0 0% 100%;
-  --foreground: 224 71% 4%; /* slightly darker for better contrast on white */
-  --muted: 210 40% 96.1%;
-  --border: 214.3 31.8% 91.4%;
-  --card: 0 0% 100%;
-  --card-foreground: 224 71% 4%;
-  --primary: 221.2 83.2% 40%; /* reduce lightness for WCAG contrast */
-  --primary-foreground: 210 40% 98%;
-}
-
-.dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --border: 217.2 32.6% 17.5%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --primary: 217.2 91.2% 60%;
-  --primary-foreground: 222.2 47.4% 11.2%;
+  --background: #ffffff;
+  --foreground: #111111;
+  --secondary: #666666;
+  /* Spec asks for #999999, darkened to keep AA contrast on white */
+  --muted: #767676;
+  --hairline: #e5e5e5;
+  --code-bg: #f7f7f5;
+  --link-hover: #777777;
+  --serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif;
+  --mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
 }
 
 @theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-muted: hsl(var(--muted));
-  --color-border: hsl(var(--border));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-hairline: var(--hairline);
+  --font-serif: var(--serif);
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
 }
 
 html {
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
 body {
-  @apply bg-background text-foreground antialiased;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--serif);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* prose tweaks */
-.prose {
-  @apply leading-relaxed prose-neutral dark:prose-invert;
-  /* Ensure sufficient contrast in both themes using our design tokens */
-  --tw-prose-body: hsl(var(--foreground));
-  --tw-prose-headings: hsl(var(--foreground));
-  --tw-prose-bold: hsl(var(--foreground));
-  --tw-prose-links: hsl(var(--primary));
-  --tw-prose-hr: hsl(var(--border));
-  --tw-prose-quotes: hsl(var(--foreground));
-  --tw-prose-counters: hsl(var(--foreground));
-  --tw-prose-bullets: hsl(var(--foreground));
-  --tw-prose-code: hsl(var(--foreground));
-  --tw-prose-th-borders: hsl(var(--border));
-  --tw-prose-td-borders: hsl(var(--border));
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
-.prose h1,
-.prose h2,
-.prose h3 {
-  @apply font-semibold tracking-tight;
+/* Small uppercase sans labels (dates, post meta) */
+.meta-label {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
-/* Ensure headings are high-contrast in dark mode */
-.prose h1 {
-  @apply text-foreground;
+/* Post body typography */
+.post-body {
+  font-size: 19px;
+  line-height: 1.75;
 }
 
-/* Hover effect on headings: only when they are links (wrapped by anchor) */
-.prose h1:hover .anchor,
-.prose h2:hover .anchor,
-.prose h3:hover .anchor,
-.prose h4:hover .anchor,
-.prose h5:hover .anchor,
-.prose h6:hover .anchor {
-  @apply text-primary;
+.post-body > * {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
-.prose h2 {
-  @apply mt-10 mb-4 text-2xl md:text-3xl;
+.post-body > * + * {
+  margin-top: 24px;
 }
 
-.prose p {
-  @apply my-5;
+.post-body h2 {
+  margin-top: 48px;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.3;
 }
 
-/* headings: don't underline the autolink wrapper; only show subtle hover */
-.prose h1 a,
-.prose h2 a,
-.prose h3 a,
-.prose h4 a,
-.prose h5 a,
-.prose h6 a {
-  @apply no-underline text-inherit hover:text-primary;
+.post-body h3 {
+  margin-top: 40px;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.35;
 }
 
-.prose a {
-  /* Use higher-contrast link color and keep underline for accessibility */
-  @apply text-primary underline underline-offset-4 hover:no-underline;
+/* rehype-autolink-headings wraps headings in anchors */
+.post-body h1 a,
+.post-body h2 a,
+.post-body h3 a,
+.post-body h4 a {
+  color: inherit;
+  text-decoration: none;
 }
 
-/* style appended heading anchors (from rehype-autolink-headings) */
-.prose .anchor {
-  /* The heading is wrapped by this anchor; inherit color to avoid muted look */
-  @apply no-underline text-inherit hover:text-primary;
+.post-body h1 a:hover,
+.post-body h2 a:hover,
+.post-body h3 a:hover,
+.post-body h4 a:hover {
+  color: var(--link-hover);
 }
 
-.prose pre {
-  @apply rounded-lg border border-border p-4 bg-muted/40;
+.post-body a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
-.prose code {
-  @apply rounded px-1 py-0.5 bg-muted/60;
+.post-body a:hover {
+  color: var(--link-hover);
 }
 
-.prose img {
-  @apply rounded-lg border border-border;
+.post-body strong {
+  font-weight: 600;
+}
+
+.post-body ul,
+.post-body ol {
+  padding-left: 28px;
+}
+
+.post-body ul {
+  list-style: disc;
+}
+
+.post-body ol {
+  list-style: decimal;
+}
+
+.post-body li + li {
+  margin-top: 8px;
+}
+
+.post-body blockquote {
+  border-left: 2px solid var(--foreground);
+  padding: 4px 0 4px 28px;
+  font-size: 22px;
+  line-height: 1.5;
+  font-style: italic;
+  color: #444444;
+}
+
+.post-body pre {
+  background: var(--code-bg);
+  border-radius: 4px;
+  padding: 24px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.post-body pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.post-body :not(pre) > code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  border-radius: 3px;
+  padding: 2px 5px;
+}
+
+.post-body img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+}
+
+.post-body hr {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  margin-top: 48px;
+}
+
+.post-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 17px;
+}
+
+.post-body th,
+.post-body td {
+  border-bottom: 1px solid var(--hairline);
+  padding: 8px 12px 8px 0;
+  text-align: left;
 }

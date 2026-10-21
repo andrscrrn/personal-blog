@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllSlugs, getPostBySlug } from "@/lib/posts";
 import { compileMDX } from "next-mdx-remote/rsc";
@@ -5,16 +6,23 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { Comments } from "@/components/Comments";
+import { SocialLinks } from "@/components/SocialLinks";
 import { absoluteUrl } from "@/lib/site";
 import type { Metadata } from "next";
 import { formatDate } from "@/lib/date";
-import Image from "next/image";
 
 type Props = { params: Promise<{ slug: string }> };
 
 // Ensure this route is treated as fully static-only
 export const dynamic = "force-static";
 export const dynamicParams = false;
+
+const WORDS_PER_MINUTE = 200;
+
+function readingTimeMinutes(content: string): number {
+  const words = content.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / WORDS_PER_MINUTE));
+}
 
 export async function generateStaticParams() {
   const slugs = await getAllSlugs();
@@ -63,6 +71,7 @@ export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
+  const minutes = readingTimeMinutes(post.content);
   const mdx = await compileMDX({
     source: post.content,
     options: {
@@ -79,27 +88,38 @@ export default async function BlogPostPage({ params }: Props) {
     },
   });
   return (
-    <div className="space-y-8">
-      <article className="prose prose-lg max-w-prose mx-auto">
-        <div className="mb-6 -mx-4 sm:mx-0">
-          <div className="relative aspect-[1200/630] overflow-hidden rounded-xl border border-border">
-            <Image
-              src={post.meta.image ?? "/globe.svg"}
-              alt={post.meta.title}
-              fill
-              sizes="(min-width: 640px) 640px, 100vw"
-              className="object-cover"
-              priority
-            />
-          </div>
-        </div>
-        <h1>{post.meta.title}</h1>
-        <p className="!mt-0 text-sm text-muted-foreground">
-          <time>{formatDate(post.meta.date)}</time>
-        </p>
-        {mdx.content}
+    <div className="flex flex-1 flex-col">
+      <article className="mb-16">
+        <header>
+          <p className="meta-label mb-4">
+            <time dateTime={new Date(post.meta.date).toISOString()}>
+              {formatDate(post.meta.date)}
+            </time>
+            {" · "}
+            {minutes} min read
+          </p>
+          <h1 className="mb-8 text-[34px] font-normal leading-[1.2] tracking-[-0.01em] sm:text-[44px]">
+            {post.meta.title}
+          </h1>
+          {post.meta.description ? (
+            <p className="mb-12 text-[20px] italic leading-[1.6] text-secondary">
+              {post.meta.description}
+            </p>
+          ) : null}
+          <div className="mb-12 border-t border-hairline" aria-hidden="true" />
+        </header>
+        <div className="post-body">{mdx.content}</div>
       </article>
       <Comments />
+      <footer className="mt-auto flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 border-t border-hairline pt-8 pb-14">
+        <Link
+          href="/"
+          className="text-[15px] italic text-secondary hover:text-foreground"
+        >
+          ← All posts
+        </Link>
+        <SocialLinks />
+      </footer>
     </div>
   );
 }

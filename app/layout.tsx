@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Newsreader, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import { Navbar } from "@/components/Navbar";
+import { SiteHeader } from "@/components/SiteHeader";
 import { Analytics } from "@/components/Analytics";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
   subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
@@ -55,14 +56,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="min-h-dvh bg-background text-foreground">
-            <Navbar />
-            <main className="container mx-auto px-4 py-8">{children}</main>
-          </div>
-        </ThemeProvider>
+    <html lang="en" className={`${newsreader.variable} ${jetbrainsMono.variable}`}>
+      <body>
+        <div className="mx-auto flex min-h-dvh w-full max-w-[680px] flex-col px-4">
+          <SiteHeader />
+          <main className="flex flex-1 flex-col">{children}</main>
+        </div>
         <Analytics />
       </body>
     </html>
