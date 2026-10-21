@@ -5,6 +5,7 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import Image from "next/image";
 import { Comments } from "@/components/Comments";
 import { SocialLinks } from "@/components/SocialLinks";
 import { absoluteUrl } from "@/lib/site";
@@ -117,10 +118,21 @@ export default async function BlogPostPage({ params }: Props) {
             style={{ "--delay": "240ms" } as React.CSSProperties}
             aria-hidden="true"
           />
+          {post.meta.image ? (
+            <Image
+              src={post.meta.image}
+              alt={post.meta.title}
+              width={1200}
+              height={630}
+              priority
+              className="fade-up mb-12 w-full rounded-[4px] border border-hairline object-cover"
+              style={{ "--delay": "300ms" } as React.CSSProperties}
+            />
+          ) : null}
         </header>
         <div
           className="fade-up post-body"
-          style={{ "--delay": "300ms" } as React.CSSProperties}
+          style={{ "--delay": "360ms" } as React.CSSProperties}
         >
           {mdx.content}
         </div>
