@@ -7,11 +7,11 @@ export default async function Home() {
   return (
     <div className="flex flex-1 flex-col">
       <h1 className="mb-5 text-[32px] font-normal leading-[1.2] tracking-[-0.01em] sm:text-[42px]">
-        Notes on engineering, teams, and the odd airline checkout.
+        Engineer, team builder, car enthusiast, and endlessly curious.
       </h1>
       <p className="mb-16 text-[18px] italic leading-[1.6] text-secondary">
-        Engineering Manager in Medellín, Colombia. Distributed teams, a
-        frontend focus, and the occasional detour.
+        I live in Medellín, Colombia, lead distributed engineering teams, and
+        spend my free time exploring AI, new ideas, and the occasional drive.
       </p>
       <PostList posts={posts} />
       <SiteFooter />
