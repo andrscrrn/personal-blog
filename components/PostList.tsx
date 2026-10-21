@@ -14,7 +14,7 @@ export function PostList({ posts }: { posts: PostMeta[] }) {
             <span className="meta-label">{formatDate(post.date)}</span>
             <Link
               href={`/blog/${post.slug}`}
-              className="text-[22px] font-medium leading-[1.3] hover:text-[#777777] sm:text-[26px]"
+              className="text-[22px] font-medium leading-[1.3] hover:text-link-hover sm:text-[26px]"
             >
               {post.title}
             </Link>

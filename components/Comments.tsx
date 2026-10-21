@@ -25,7 +25,7 @@ export function Comments() {
     script.setAttribute("data-reactions-enabled", "1");
     script.setAttribute("data-emit-metadata", "0");
     script.setAttribute("data-input-position", "bottom");
-    script.setAttribute("data-theme", "light");
+    script.setAttribute("data-theme", "preferred_color_scheme");
     script.setAttribute("data-lang", "en");
     script.setAttribute("data-loading", "lazy");
     document.getElementById("giscus-container")?.appendChild(script);

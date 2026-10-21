@@ -45,9 +45,6 @@ export const metadata: Metadata = {
     description: "Thoughts, notes, and projects",
     images: ["/globe.svg"],
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export default function RootLayout({
