@@ -1,0 +1,81 @@
+---
+title: Internet Monitor
+meta: 2026 — Present
+description: >-
+  My internet kept dropping, so I built the app to prove it: first a Node.js
+  prototype, then a full rewrite in Swift, an App Review saga, a bundled MCP
+  server, and a real product on the Mac App Store.
+image: /projects/internet-monitor-cover.webp
+---
+
+For months, my home internet had a habit of dropping at the worst possible moments: video calls freezing, downloads dying, that familiar spinner of doom. And every time I called my ISP, the conversation went the same way. "It feels unstable" gets you nowhere. Their dashboard says everything is fine, and without data, you're just another customer complaining about the weather.
+
+So I did what any reasonable person would do: I went to the Mac App Store and bought monitoring apps. The best known one, [Internet Status: iOn](https://apps.apple.com/app/id1039633009), tells you whether you're online right now and keeps a text log. Useful, but binary: online or offline, nothing about *how bad* the connection is, no charts, no history I could actually hand to my provider. None of the apps I tried answered the question I cared about: **how often does my internet actually fail, and can I prove it?**
+
+Fine. I'd build my own.
+
+## The Node.js prototype: a weekend that wasn't
+
+I started with what I knew: Node.js. In late August I wrote [internet-monitor](https://github.com/andrscrrn/internet-monitor), a background service that pings 1.1.1.1, 8.8.8.8 and 9.9.9.9 every ~2 seconds, runs a DNS resolution check, and appends everything to plain JSONL files (one per day, plus an outage log). A LaunchAgent keeps it running across reboots, a local web dashboard on `localhost:5757` shows latency and outage charts, and a script renders a PDF report for the ISP: uptime summary, day-by-day breakdown, and every outage with its start, end and duration.
+
+I figured that was a weekend project. It was not, because measuring an internet connection *honestly* turns out to be full of traps I only discovered by watching my own data lie to me:
+
+- **Sleep is not an outage.** The first version happily logged my MacBook's naps as hours of downtime. The fix: detect the gap, exclude it, and add a post-wake grace period so the first groggy checks after waking don't count as a failure either.
+- **One lost ping is not "degraded".** Early on, the status flapped constantly. A single dropped packet means nothing; the classifier had to require *sustained* partial loss before declaring the connection degraded.
+- **DNS failures are their own category.** The internet can be "up" while every domain lookup fails, which in practice feels completely down. DNS failure became a degraded state of its own.
+- **Dying mid-write corrupts your history.** State had to be written atomically (write to a temp file, rename) so a crash couldn't leave half a JSON behind.
+- **Raw samples don't scale.** A check every 2 seconds is ~43,000 samples a day. The dashboard went from re-reading files to serving queries from in-memory per-minute aggregates.
+
+After a few days of iterating, it worked, and it worked well. I finally had charts with zoom, sub-second outage detection, and a PDF that said exactly when my connection failed. (It also settled the argument with my ISP, which is a story for another day.)
+
+## The limits of localhost
+
+But a Node service with a localhost dashboard has a ceiling. Notifications were a hack (shelling out to `terminal-notifier`, falling back to `osascript`). There was no menu bar presence, so "is my internet okay?" still meant opening a browser tab. Installing it on another Mac meant cloning a repo and running a shell script. And the auto-update mechanism was a `git pull` on service start, which is charming and horrifying in equal measure.
+
+The prototype had proven the idea. The product it wanted to be was obvious: a native menu bar app. So in early September I decided to rewrite it in Swift and SwiftUI, with a rule I set from day one: **App Sandbox from the first commit**, because the end goal was the Mac App Store, and retrofitting a sandbox later is misery.
+
+## The Swift rewrite: the sandbox changes everything
+
+The Node version got away with spawning `ping`. A sandboxed Mac app can't do that: no subprocesses, no raw ICMP sockets. The whole measurement engine had to be rethought on top of `Network.framework`, using short TCP reachability probes to the same targets instead of ICMP echo. Each check costs a few hundred bytes; the app idles around 0.5% CPU while checking every 1–2 seconds.
+
+The port kept the Node prototype as the reference implementation, including its test suite, which made the rewrite feel more like translating a spec than starting over. But native brought its own hard-won lessons:
+
+- **One-second outages, with receipts.** Every suspect check is confirmed by an immediate retry before an outage is declared, so even a one-second drop gets caught without false positives.
+- **Flapping needed its own state machine.** When a connection bounces up and down every few seconds, you don't want 14 notifications. A "flap guard" collapses storms into a single "unstable connection" notice, and (a bug that took a while to find) never closes the storm while the connection is still down.
+- **An ongoing outage must survive a quit.** The current outage is persisted as it happens, so quitting or crashing mid-outage can't erase the evidence.
+- **Losing Wi-Fi is not an ISP outage.** If the local network itself disappears (Wi-Fi off, cable out), that's never logged as evidence against the provider. The report should only blame the right party.
+- **macOS gates the Wi-Fi name behind Location Services.** To label measurements with the network they ran on (so evidence from your home network doesn't mix with the coffee shop's), the app needs the SSID, and Apple only hands that out with location permission. No location is ever computed or stored; the entitlement exists purely to read a network name. Explaining *that* gracefully to users took real thought.
+
+That per-network labeling became one of the app's genuine differentiators: when you export the ISP report, you pick the period *and the network*, so the PDF only contains outages from the provider you're complaining about.
+
+## Making it a product, not a project
+
+Somewhere along the way this stopped being a tool for me and became a product. That meant a whole category of work that has nothing to do with measuring packets: a proper icon (the "Status Ring": a day of your connection drawn as a ring, green for uptime, a red segment for the outage), onboarding, full English and Spanish localization, a [marketing site](https://internetmonitor.app), screenshots, pricing.
+
+I also did an actual competitor teardown, buying and testing the alternatives. The most interesting finding: the closest competitor's advertised "outage history + PDF report" turned out to be event-based interface logging plus a one-page point-in-time diagnostic snapshot, useless as ISP evidence. That confirmed the positioning: *the internet monitor that gives you proof*, at US$4.99 one-time.
+
+One practice that paid off: a single `features.md` file holds every feature's one-liner in both languages, and the onboarding, App Store listing, README and website all propagate from it. When copy changes, it changes in one place.
+
+## App Review: rejected by a word
+
+Submitting to the App Store added its own plot twists. The first rejection came from App Review's automated metadata scan, triggered by the *word* "VPN" in a description that was explaining the app has nothing to do with VPNs. The fix was to delete the word entirely and state in the review notes that the app uses no NetworkExtension or VPN APIs. The second round taught me guideline 2.4.5(iii): launch-at-login must be strictly opt-in, off by default, enabled only by an explicit user action.
+
+Version 1.0.0 went live in October. Then 1.0.1 lowered the minimum OS from macOS 26 to macOS 14, because limiting a utility app to the newest OS turns away most of its potential users for no technical reason, the engine never needed anything newer. As I write this, 1.0.2 is on its way out, mostly hardening found by running adversarial review passes over the codebase.
+
+## The unexpected feature: your AI can read your internet's history
+
+My favorite late addition: the app bundles a second executable, a local [MCP](https://modelcontextprotocol.io) server, so Claude, ChatGPT or any MCP client can answer "how was my internet this week?" from your own measurements. It's a hand-rolled JSON-RPC-over-stdio server (no framework, newline-delimited messages) that reads the measurement store read-only through a shared app group container. It works with the app closed, opens no network port, and sends nothing anywhere. For Claude Desktop there's a one-click `.mcpb` extension.
+
+I use it constantly. Asking in plain language beats opening a dashboard, and it turns months of JSONL into answers: uptime per network, worst outages, latency trends.
+
+## What I learned
+
+- **"Simple" monitoring is an honesty problem, not a plumbing problem.** Pinging a server is trivial; not lying to yourself about sleep gaps, flaps, DNS and local-network losses is the actual work.
+- **Prototype in what you know, rewrite in what the product needs.** The Node version answered every design question cheaply before a single line of Swift existed, and then served as the executable spec for the port.
+- **The sandbox dictates architecture.** No `ping` subprocess sounds like a footnote until it forces you to redesign your entire measurement engine around TCP probes.
+- **Shipping is a second project.** Icon, localization, onboarding, listing, website, review notes, pricing: easily as much work as the engine, and just as load-bearing.
+- **App Review scans metadata literally.** Even explaining that you *don't* do something can get you flagged for mentioning it.
+
+Most of this, both the prototype and the native app, was built in long sessions with AI coding agents (lately Claude Code, with a written "working agreement" the sessions follow, and adversarial review passes before each release). That's probably a post of its own.
+
+If your internet "feels unstable" and your provider insists it's fine, [Internet Monitor](https://apps.apple.com/app/id6818842901) is on the Mac App Store, and the original Node prototype remains [open source](https://github.com/andrscrrn/internet-monitor). Stop arguing with your ISP. Start proving.

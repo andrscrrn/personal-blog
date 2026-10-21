@@ -9,6 +9,8 @@ export type Entry = {
   title: ReactNode;
   description?: string;
   image?: string;
+  /** Rendered thumbnail (e.g. a generated SVG); takes precedence over image. */
+  thumbnail?: ReactNode;
 };
 
 export function EntryList({
@@ -44,7 +46,11 @@ export function EntryList({
                   </span>
                 ) : null}
               </span>
-              {entry.image ? (
+              {entry.thumbnail ? (
+                <span className="post-thumb h-[88px] w-[88px] shrink-0 overflow-hidden rounded-[4px] border border-hairline sm:h-28 sm:w-28">
+                  {entry.thumbnail}
+                </span>
+              ) : entry.image ? (
                 <span className="post-thumb h-[88px] w-[88px] shrink-0 overflow-hidden rounded-[4px] border border-hairline sm:h-28 sm:w-28">
                   <Image
                     src={entry.image}

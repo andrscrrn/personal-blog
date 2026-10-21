@@ -1,5 +1,11 @@
 import type { Project } from "@/lib/projects";
 import { EntryList } from "@/components/EntryList";
+import { StatusRingThumb } from "@/components/StatusRing";
+
+/** Generated thumbnails per project; these win over the static image. */
+const projectThumbnails: Record<string, React.ReactNode> = {
+  "internet-monitor": <StatusRingThumb />,
+};
 
 export function ProjectList({
   projects,
@@ -25,6 +31,7 @@ export function ProjectList({
         ),
         description: project.description,
         image: project.image,
+        thumbnail: projectThumbnails[project.slug],
       }))}
     />
   );

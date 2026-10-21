@@ -311,6 +311,63 @@ a {
   transform: scale(1.09);
 }
 
+/* Generated Status Ring, as list thumbnail and project hero (StatusRing.tsx) */
+.ring-thumb,
+.ring-hero {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  background: radial-gradient(120% 120% at 50% 42%, #1b2740 0%, #0c1220 100%);
+}
+
+.ring-thumb {
+  height: 100%;
+}
+
+.ring-hero {
+  aspect-ratio: 1200 / 630;
+  /* Also defeats the content-based minimum height that an aspect-ratio box
+     with visible overflow gets from the SVG's intrinsic 100% width. */
+  overflow: hidden;
+}
+
+.ring-thumb svg,
+.ring-hero svg {
+  overflow: visible;
+  transition: transform 0.5s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+.ring-thumb svg {
+  width: 86%;
+  height: 86%;
+}
+
+.ring-hero svg {
+  width: auto;
+  height: 76%;
+}
+
+/* Zoom rides the hover and simply eases back out when it leaves */
+.post-row:hover .ring-thumb svg,
+.post-row:focus-visible .ring-thumb svg {
+  transform: scale(1.1);
+}
+
+.ring-hero:hover svg {
+  transform: scale(1.08);
+}
+
+.ring-thumb-ring,
+.ring-thumb-core,
+.ring-thumb-ping {
+  transform-origin: 50% 50%;
+  transform-box: view-box;
+}
+
+.ring-thumb-ping {
+  opacity: 0;
+}
+
 /* Back arrow nudges left on hover */
 .back-link .arrow {
   display: inline-block;
@@ -344,7 +401,9 @@ html {
 
   .post-text,
   .post-thumb img,
-  .post-row .meta-label {
+  .post-row .meta-label,
+  .ring-thumb svg,
+  .ring-hero svg {
     transition: none;
   }
 
@@ -352,6 +411,9 @@ html {
   .post-row:focus-visible .post-text,
   .post-row:hover .post-thumb img,
   .post-row:focus-visible .post-thumb img,
+  .post-row:hover .ring-thumb svg,
+  .post-row:focus-visible .ring-thumb svg,
+  .ring-hero:hover svg,
   .back-link:hover .arrow {
     transform: none;
   }

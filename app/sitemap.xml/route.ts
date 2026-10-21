@@ -1,4 +1,5 @@
 import { getAllPosts } from "@/lib/posts";
+import { getProjectSlugs } from "@/lib/projects";
 import { absoluteUrl } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -10,6 +11,7 @@ export async function GET() {
     absoluteUrl("/blog"),
     absoluteUrl("/about"),
     ...posts.map((p) => absoluteUrl(`/blog/${p.slug}`)),
+    ...getProjectSlugs().map((slug) => absoluteUrl(`/projects/${slug}`)),
   ];
   const xml =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
