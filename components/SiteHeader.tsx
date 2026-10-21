@@ -17,6 +17,12 @@ export function SiteHeader() {
           Blog
         </Link>
         <Link
+          href="/projects"
+          className="link-underline text-secondary hover:text-foreground"
+        >
+          Projects
+        </Link>
+        <Link
           href="/about"
           className="link-underline text-secondary hover:text-foreground"
         >

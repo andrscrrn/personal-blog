@@ -9,6 +9,7 @@ export async function GET() {
   const urls = [
     absoluteUrl("/"),
     absoluteUrl("/blog"),
+    absoluteUrl("/projects"),
     absoluteUrl("/about"),
     ...posts.map((p) => absoluteUrl(`/blog/${p.slug}`)),
     ...getProjectSlugs().map((slug) => absoluteUrl(`/projects/${slug}`)),
