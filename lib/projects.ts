@@ -20,17 +20,22 @@ export const projects: Project[] = [
     title: "Internet Monitor",
     description:
       "My internet kept dropping, so I built the app to prove it: from a Node.js prototype to a native Swift menu bar app on the Mac App Store.",
-    meta: "2026 — Present",
+    meta: "2026 – Present",
     status: "active",
     href: "/projects/internet-monitor",
   },
 ];
+
+export type ProjectLink = { label: string; href: string };
 
 export type ProjectPageMeta = {
   title: string;
   description: string;
   meta?: string;
   image?: string;
+  /** Mac App Store URL, rendered as the official badge. */
+  appStore?: string;
+  links?: ProjectLink[];
   slug: string;
 };
 
@@ -59,6 +64,13 @@ export function getProjectBySlug(
     description: data.description ?? "",
     meta: data.meta ? String(data.meta) : undefined,
     image: data.image ? String(data.image) : undefined,
+    appStore: data.appStore ? String(data.appStore) : undefined,
+    links: Array.isArray(data.links)
+      ? data.links.map((l: ProjectLink) => ({
+          label: String(l.label),
+          href: String(l.href),
+        }))
+      : undefined,
     slug,
   };
   return { meta, content };

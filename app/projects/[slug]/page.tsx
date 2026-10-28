@@ -104,6 +104,41 @@ export default async function ProjectPage({ params }: Props) {
               {project.meta.description}
             </p>
           ) : null}
+          {project.meta.appStore || project.meta.links?.length ? (
+            <p
+              className="fade-up mb-12 flex flex-wrap items-center gap-x-6 gap-y-4"
+              style={{ "--delay": "200ms" } as React.CSSProperties}
+            >
+              {project.meta.appStore ? (
+                <a
+                  href={project.meta.appStore}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Download on the Mac App Store"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/projects/mac-app-store-badge.svg"
+                    alt="Download on the Mac App Store"
+                    width={156}
+                    height={40}
+                    className="h-10 w-auto"
+                  />
+                </a>
+              ) : null}
+              {project.meta.links?.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline text-[15px] italic text-secondary hover:text-foreground"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </p>
+          ) : null}
           <div
             className="fade-up mb-12 border-t border-hairline"
             style={{ "--delay": "240ms" } as React.CSSProperties}
