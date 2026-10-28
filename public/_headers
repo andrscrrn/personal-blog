@@ -1,4 +1,5 @@
-# Cloudflare Pages headers. Later rules override earlier ones per header.
+# Cloudflare Pages headers. "! Header" detaches the value a broader rule set,
+# so specific rules replace Cache-Control instead of appending to it.
 
 # HTML and everything unhashed: revalidate on every visit
 /*
@@ -8,16 +9,21 @@
 
 # Hashed build assets never change under the same name
 /_astro/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 # Fonts are versioned by hand and effectively immutable
 /fonts/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 # OG images and covers change rarely
 /og/*
+  ! Cache-Control
   Cache-Control: public, max-age=86400
 /projects/*.webp
+  ! Cache-Control
   Cache-Control: public, max-age=86400
 /projects/*.svg
+  ! Cache-Control
   Cache-Control: public, max-age=86400
