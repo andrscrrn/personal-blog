@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EntryList from "../../components/EntryList.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import { projectCards } from "../../lib/projects";
+
+const projectEntries = projectCards.map((project) => ({
+  key: project.slug,
+  href: project.href ?? "#",
+  meta: project.meta,
+  title: project.title,
+  active: project.status === "active",
+  description: project.description,
+  statusRing: project.slug === "internet-monitor",
+}));
+---
+<BaseLayout title="Projects" description="Personal projects and experiments">
+  <div class="flex flex-1 flex-col">
+    <h1 class="fade-up mb-10 text-[32px] font-normal leading-[1.2] tracking-[-0.01em]">
+      All projects
+    </h1>
+    <EntryList entries={projectEntries} delayStart={90} />
+    <SiteFooter />
+  </div>
+</BaseLayout>

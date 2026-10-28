@@ -1,0 +1,125 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SocialLinks from "../../components/SocialLinks.astro";
+import StatusRing from "../../components/StatusRing.astro";
+import { projectCards } from "../../lib/projects";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+type Props = { project: CollectionEntry<"projects"> };
+const { project } = Astro.props;
+const { Content } = await render(project);
+const card = projectCards.find((p) => p.slug === project.id);
+
+/** Generated heroes per project; these win over the static image. */
+const hasGeneratedHero = project.id === "internet-monitor";
+---
+<BaseLayout
+  title={project.data.title}
+  description={project.data.description}
+  ogImage={project.data.image}
+>
+  <div class="flex flex-1 flex-col">
+    <article class="mb-16">
+      <header>
+        {project.data.meta && (
+          <p class="fade-up meta-label mb-4">{project.data.meta}</p>
+        )}
+        <h1
+          class="fade-up mb-8 text-[34px] font-normal leading-[1.2] tracking-[-0.01em] sm:text-[44px]"
+          style="--delay: 80ms"
+        >
+          {project.data.title}
+          {card?.status === "active" && (
+            <span class="status-pill live ml-4 align-[6px]">Active</span>
+          )}
+        </h1>
+        {project.data.description && (
+          <p
+            class="fade-up mb-12 text-[20px] italic leading-[1.6] text-secondary"
+            style="--delay: 160ms"
+          >
+            {project.data.description}
+          </p>
+        )}
+        {(project.data.appStore || project.data.links?.length) && (
+          <p
+            class="fade-up mb-12 flex flex-wrap items-center gap-x-6 gap-y-4"
+            style="--delay: 200ms"
+          >
+            {project.data.appStore && (
+              <a
+                href={project.data.appStore}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Download on the Mac App Store"
+              >
+                <img
+                  src="/projects/mac-app-store-badge.svg"
+                  alt="Download on the Mac App Store"
+                  width="156"
+                  height="40"
+                  class="h-10 w-auto"
+                />
+              </a>
+            )}
+            {project.data.links?.map((link) => (
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-underline text-[15px] italic text-secondary hover:text-foreground"
+              >
+                {link.label}
+              </a>
+            ))}
+          </p>
+        )}
+        <div
+          class="fade-up mb-12 border-t border-hairline"
+          style="--delay: 240ms"
+          aria-hidden="true"
+        >
+        </div>
+        {hasGeneratedHero ? (
+          <div
+            class="fade-up mb-12 overflow-hidden rounded-[4px] border border-hairline"
+            style="--delay: 300ms"
+          >
+            <StatusRing variant="hero" />
+          </div>
+        ) : project.data.image ? (
+          <img
+            src={project.data.image}
+            alt={project.data.title}
+            width="1200"
+            height="630"
+            fetchpriority="high"
+            decoding="async"
+            class="fade-up mb-12 w-full rounded-[4px] border border-hairline object-cover"
+            style="--delay: 300ms"
+          />
+        ) : null}
+      </header>
+      <div class="fade-up post-body" style="--delay: 360ms">
+        <Content />
+      </div>
+    </article>
+    <footer class="mt-auto flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 border-t border-hairline pt-8 pb-14">
+      <a
+        href="/"
+        class="back-link text-[15px] italic text-secondary hover:text-foreground"
+      >
+        <span class="arrow" aria-hidden="true">←</span>{" "}Home
+      </a>
+      <SocialLinks />
+    </footer>
+  </div>
+</BaseLayout>

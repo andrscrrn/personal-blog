@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import EntryList from "../components/EntryList.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { getAllPosts, postThumb } from "../lib/posts";
+import { projectCards } from "../lib/projects";
+import { formatDate } from "../lib/date";
+
+const posts = await getAllPosts();
+
+const projectEntries = projectCards.map((project) => ({
+  key: project.slug,
+  href: project.href ?? "#",
+  meta: project.meta,
+  title: project.title,
+  active: project.status === "active",
+  description: project.description,
+  statusRing: project.slug === "internet-monitor",
+}));
+
+const postEntries = posts.map((post) => ({
+  key: post.id,
+  href: `/blog/${post.id}`,
+  meta: formatDate(post.data.date),
+  title: post.data.title,
+  image: postThumb(post),
+}));
+
+const writingDelay = 260 + projectCards.length * 80 + 90;
+---
+<BaseLayout>
+  <div class="flex flex-1 flex-col">
+    <h1 class="fade-up mb-5 text-[32px] font-normal leading-[1.2] tracking-[-0.01em] sm:text-[42px]">
+      Engineer, team builder, car enthusiast, and endlessly curious.
+    </h1>
+    <p
+      class="fade-up mb-14 text-[18px] italic leading-[1.6] text-secondary"
+      style="--delay: 90ms"
+    >
+      I live in Medellín, Colombia, lead distributed engineering teams, and
+      spend my free time exploring AI, new ideas, and the occasional drive.
+    </p>
+    <p class="meta-label fade-up mb-2" style="--delay: 180ms">Projects</p>
+    <EntryList entries={projectEntries} delayStart={260} />
+    <p class="meta-label fade-up mb-2 mt-12" style={`--delay: ${writingDelay}ms`}>
+      Writing
+    </p>
+    <EntryList entries={postEntries} delayStart={writingDelay + 80} />
+    <SiteFooter />
+  </div>
+</BaseLayout>

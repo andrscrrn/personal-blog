@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EntryList from "../../components/EntryList.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import { getAllPosts, postThumb } from "../../lib/posts";
+import { formatDate } from "../../lib/date";
+
+const posts = await getAllPosts();
+
+const postEntries = posts.map((post) => ({
+  key: post.id,
+  href: `/blog/${post.id}`,
+  meta: formatDate(post.data.date),
+  title: post.data.title,
+  image: postThumb(post),
+}));
+---
+<BaseLayout title="Blog" description="Articles and notes">
+  <div class="flex flex-1 flex-col">
+    <h1 class="fade-up mb-10 text-[32px] font-normal leading-[1.2] tracking-[-0.01em]">
+      All posts
+    </h1>
+    <EntryList entries={postEntries} delayStart={90} />
+    <SiteFooter />
+  </div>
+</BaseLayout>

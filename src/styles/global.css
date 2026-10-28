@@ -1,0 +1,464 @@
+@import "tailwindcss";
+
+/*
+  Self-hosted fonts: Google's latin subset (covers Spanish: á é í ó ú ñ ü ¿ ¡),
+  WOFF2 only, one file per weight actually used. 400 normal is preloaded in the
+  layout; everything else swaps in.
+*/
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin-400-italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin-500-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin-600-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");
+}
+
+/* Editorial design tokens */
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --secondary: #666666;
+  /* Spec asks for #999999, darkened to keep AA contrast on white */
+  --muted: #767676;
+  --hairline: #e5e5e5;
+  --code-bg: #f7f7f5;
+  --link-hover: #777777;
+  --blockquote: #444444;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Refined dark inversion, follows the device preference */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #121212;
+    --foreground: #e8e8e6;
+    --secondary: #a3a3a0;
+    --muted: #8f8f8c;
+    --hairline: #2a2a28;
+    --code-bg: #1c1c1a;
+    --link-hover: #8c8c8c;
+    --blockquote: #c6c6c3;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-hairline: var(--hairline);
+  --color-link-hover: var(--link-hover);
+  --font-serif: var(--serif);
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Small uppercase sans labels (dates, post meta) */
+.meta-label {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Small status pill for project rows */
+.status-pill {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 10.5px;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  padding: 2px 9px;
+  color: var(--secondary);
+}
+
+.status-pill.live {
+  color: #2d7a46;
+  border-color: rgba(45, 122, 70, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  .status-pill.live {
+    color: #6fbf8a;
+    border-color: rgba(111, 191, 138, 0.3);
+  }
+}
+
+/* Post body typography */
+.post-body {
+  font-size: 19px;
+  line-height: 1.75;
+}
+
+.post-body > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.post-body > * + * {
+  margin-top: 24px;
+}
+
+.post-body h2 {
+  margin-top: 48px;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.post-body h3 {
+  margin-top: 40px;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* rehype-autolink-headings wraps headings in anchors */
+.post-body h1 a,
+.post-body h2 a,
+.post-body h3 a,
+.post-body h4 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.post-body h1 a:hover,
+.post-body h2 a:hover,
+.post-body h3 a:hover,
+.post-body h4 a:hover {
+  color: var(--link-hover);
+}
+
+.post-body a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.post-body a:hover {
+  color: var(--link-hover);
+}
+
+.post-body strong {
+  font-weight: 600;
+}
+
+.post-body ul,
+.post-body ol {
+  padding-left: 28px;
+}
+
+.post-body ul {
+  list-style: disc;
+}
+
+.post-body ol {
+  list-style: decimal;
+}
+
+.post-body li + li {
+  margin-top: 8px;
+}
+
+.post-body blockquote {
+  border-left: 2px solid var(--foreground);
+  padding: 4px 0 4px 28px;
+  font-size: 22px;
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--blockquote);
+}
+
+.post-body pre {
+  background: var(--code-bg);
+  border-radius: 4px;
+  padding: 24px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.post-body pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.post-body :not(pre) > code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  border-radius: 3px;
+  padding: 2px 5px;
+}
+
+.post-body img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+}
+
+.post-body hr {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  margin-top: 48px;
+}
+
+.post-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 17px;
+}
+
+.post-body th,
+.post-body td {
+  border-bottom: 1px solid var(--hairline);
+  padding: 8px 12px 8px 0;
+  text-align: left;
+}
+
+/* Motion */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-up {
+  opacity: 0;
+  animation: fade-up 0.65s cubic-bezier(0.2, 0.6, 0.2, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+a {
+  transition: color 0.2s ease;
+}
+
+/* Underline that grows from the left on hover */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  padding-bottom: 2px;
+  transition: background-size 0.3s ease, color 0.2s ease;
+}
+
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* List rows are one link: hovering anywhere reacts as a whole */
+.post-text {
+  transition: transform 0.3s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+.post-link {
+  transition: color 0.2s ease;
+}
+
+.post-row .meta-label {
+  transition: color 0.2s ease;
+}
+
+.post-thumb {
+  display: block;
+}
+
+.post-thumb img {
+  transition: transform 0.45s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+.post-row:hover .post-text,
+.post-row:focus-visible .post-text {
+  transform: translateX(6px);
+}
+
+.post-row:hover .post-link,
+.post-row:focus-visible .post-link {
+  color: var(--link-hover);
+}
+
+.post-row:hover .meta-label,
+.post-row:focus-visible .meta-label {
+  color: var(--secondary);
+}
+
+.post-row:hover .post-thumb img,
+.post-row:focus-visible .post-thumb img {
+  transform: scale(1.09);
+}
+
+/* Generated Status Ring, as list thumbnail and project hero (StatusRing.astro) */
+.ring-thumb,
+.ring-hero {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  background: radial-gradient(120% 120% at 50% 42%, #1b2740 0%, #0c1220 100%);
+}
+
+.ring-thumb {
+  height: 100%;
+}
+
+.ring-hero {
+  aspect-ratio: 1200 / 630;
+  /* Also defeats the content-based minimum height that an aspect-ratio box
+     with visible overflow gets from the SVG's intrinsic 100% width. */
+  overflow: hidden;
+}
+
+.ring-thumb svg,
+.ring-hero svg {
+  overflow: visible;
+  transition: transform 0.5s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+.ring-thumb svg {
+  width: 86%;
+  height: 86%;
+}
+
+.ring-hero svg {
+  width: auto;
+  height: 76%;
+}
+
+/* Zoom rides the hover and simply eases back out when it leaves */
+.post-row:hover .ring-thumb svg,
+.post-row:focus-visible .ring-thumb svg {
+  transform: scale(1.1);
+}
+
+.ring-hero:hover svg {
+  transform: scale(1.08);
+}
+
+.ring-thumb-ring,
+.ring-thumb-core,
+.ring-thumb-ping {
+  transform-origin: 50% 50%;
+  transform-box: view-box;
+}
+
+.ring-thumb-ping {
+  opacity: 0;
+}
+
+/* Back arrow nudges left on hover */
+.back-link .arrow {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+.back-link:hover .arrow {
+  transform: translateX(-5px);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .fade-up {
+    animation: none;
+    opacity: 1;
+  }
+
+  a,
+  .link-underline,
+  .post-link,
+  .back-link .arrow {
+    transition: none;
+  }
+
+  .post-text,
+  .post-thumb img,
+  .post-row .meta-label,
+  .ring-thumb svg,
+  .ring-hero svg {
+    transition: none;
+  }
+
+  .post-row:hover .post-text,
+  .post-row:focus-visible .post-text,
+  .post-row:hover .post-thumb img,
+  .post-row:focus-visible .post-thumb img,
+  .post-row:hover .ring-thumb svg,
+  .post-row:focus-visible .ring-thumb svg,
+  .ring-hero:hover svg,
+  .back-link:hover .arrow {
+    transform: none;
+  }
+}
