@@ -2,15 +2,13 @@
 
 Live site: https://andrescarreno.co
 
-[![Deploy to GitHub Pages](https://github.com/andrscrrn/personal-blog/actions/workflows/deploy.yml/badge.svg)](https://github.com/andrscrrn/personal-blog/actions/workflows/deploy.yml)
-
 ## Features
 
 - Astro 5, fully static output with zero client JavaScript by default
 - Tailwind CSS v4 (build-time only), light/dark theme via `prefers-color-scheme`
 - MDX posts with GFM, slugged/autolinked headings
 - Self-hosted subset fonts, all CSS inlined, internal links prefetched
-- Deployed via GitHub Actions to GitHub Pages (`public/_headers` ready for Cloudflare Pages)
+- Hosted on Cloudflare Pages: push to `main` deploys, branches get preview URLs, caching via `public/_headers`
 
 ## Quick start
 

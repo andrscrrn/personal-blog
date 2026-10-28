@@ -9,8 +9,8 @@ Purpose: Personal blog as fully static HTML with near-zero client JavaScript, mo
 - Theming: CSS `prefers-color-scheme` (no JS theme toggle)
 - Markdown pipeline: GFM (Astro default) + `rehype-slug` + `rehype-autolink-headings`
 - Fonts: self-hosted WOFF2 latin subsets in `public/fonts/` (Newsreader 400/400i/500/600, JetBrains Mono 400), `font-display: swap`, only 400 normal is preloaded
-- Hosting: GitHub Pages today (workflow in `.github/workflows/deploy.yml`); `public/_headers` is ready for Cloudflare Pages
-- Domain: `andrescarreno.co` (Squarespace DNS) with `public/CNAME`
+- Hosting: Cloudflare Pages (project `personal-blog`, builds `npm run build` from `main`, serves `dist/`); caching rules in `public/_headers`
+- Domain: `andrescarreno.co`, registered at Porkbun, DNS on Cloudflare
 - Analytics: none (GA4 was removed in the Astro migration)
 - Comments: none (the Giscus component was removed; re-add as an island if ever needed)
 
@@ -38,17 +38,11 @@ Purpose: Personal blog as fully static HTML with near-zero client JavaScript, mo
 - Preview the built site: `npm run preview`
 - Type check: `npm run check`
 - OG images and thumbnails: `npm run optimize:og`
-- Deploy: GitHub Actions workflow "Deploy to GitHub Pages" publishes `dist/`
+- Deploy: push to `main`; Cloudflare Pages builds and publishes automatically (previews per branch at `*.personal-blog-vjv.pages.dev`)
 
 ## Operational vars
-- `SITE_URL`: canonical site (defaults to `https://andrescarreno.co`); the workflow still falls back to the old `NEXT_PUBLIC_SITE_URL` repo variable
-- `BASE_PATH`: only for project-pages hosting under a subpath (falls back to `NEXT_PUBLIC_BASE_PATH`)
+- `SITE_URL`: canonical site, defaults to `https://andrescarreno.co` in `astro.config.mjs` (override only for previews)
+- `BASE_PATH`: only if the site ever needs to live under a subpath
 
-## Domain modes
-- Custom domain (current): `public/CNAME` = `andrescarreno.co`; leave `BASE_PATH` empty
-- Project page (alternative): set `BASE_PATH=/REPO_NAME` and remove `public/CNAME`
-
-## Moving to Cloudflare Pages (planned)
-- Connect the repo in the Cloudflare dashboard: build command `npm run build`, output directory `dist`
-- `public/_headers` already sets immutable caching for `/_astro/*` and `/fonts/*` and revalidation for HTML
-- Point DNS at Cloudflare Pages and remove the GitHub Pages workflow + `public/CNAME` afterwards
+## Hosting history
+- Migrated from GitHub Pages to Cloudflare Pages in October 2026; the old deploy workflow and `public/CNAME` were removed then

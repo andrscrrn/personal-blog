@@ -1,41 +1,19 @@
 # Deployment
 
-## GitHub Pages (current)
+## Cloudflare Pages (current)
 
-- Static build: `npm run build` → output `dist/`.
-- CI: `.github/workflows/deploy.yml` builds and uploads `dist/` to the Pages artifact; the deploy job publishes.
-- Repository Pages settings: Build & deployment = GitHub Actions.
-- Limitation: GitHub Pages ignores `public/_headers` and serves everything with a fixed short cache.
+- Project `personal-blog` in the Cloudflare account, connected to the GitHub repo via the Cloudflare Workers and Pages GitHub App (access limited to this repo).
+- Every push to `main` builds `npm run build` (Astro preset) and publishes `dist/` to production at `https://andrescarreno.co`.
+- Every other branch gets a preview deployment at `<hash>.personal-blog-vjv.pages.dev`.
+- Caching: `public/_headers` sets `immutable` for `/_astro/*` and `/fonts/*`, revalidation for HTML. The `! Cache-Control` detach lines matter: Cloudflare appends duplicate headers otherwise.
+- Rollbacks: Workers & Pages → personal-blog → Deployments → "..." → Rollback.
 
-## Cloudflare Pages (planned)
+## Domain and DNS
 
-- Connect the repo in the Cloudflare dashboard: build command `npm run build`, output directory `dist`.
-- `public/_headers` already sets `immutable` caching for `/_astro/*` and `/fonts/*` and revalidation for HTML.
-- Point DNS at Cloudflare Pages; afterwards remove the GitHub Pages workflow and `public/CNAME`.
+- Registrar: Porkbun. Nameservers point to Cloudflare (`logan.ns.cloudflare.com`, `sierra.ns.cloudflare.com`).
+- DNS zone lives in Cloudflare and holds the site records plus the Google MX records for `hello@andrescarreno.co`. Do not delete the MX records.
+- Custom domains are attached to the Pages project (`andrescarreno.co` and `www.andrescarreno.co`); Cloudflare manages the records and TLS certificates for them.
 
-## Domain modes
+## History
 
-- Custom domain (current):
-  - `public/CNAME` = `andrescarreno.co`
-  - Leave `BASE_PATH` empty
-  - DNS (Squarespace):
-    - Apex `andrescarreno.co`: A records to GitHub Pages IPs (or CNAME flatten to `andrscrrn.github.io` if supported)
-    - `www` CNAME → `andrscrrn.github.io` (optional)
-    - 301 forwarding rule: `blog.andrescarreno.co/*` → `https://andrescarreno.co/blog/$1`
-- Project page (alternative):
-  - Remove `public/CNAME`
-  - Set repo variable `BASE_PATH=/personal-blog`
-
-## Variables
-
-- `SITE_URL` (e.g., `https://andrescarreno.co`); the workflow falls back to the old `NEXT_PUBLIC_SITE_URL` repo variable
-- `BASE_PATH` (only for project-pages hosting; falls back to `NEXT_PUBLIC_BASE_PATH`)
-- Analytics and comments variables were removed with the Astro migration
-
-## Commands
-
-- Trigger deploy:
-  ```bash
-  gh workflow run "Deploy to GitHub Pages" -R andrscrrn/personal-blog
-  gh run list --workflow "Deploy to GitHub Pages" -R andrscrrn/personal-blog --limit 1
-  ```
+- Until October 2026 the site deployed to GitHub Pages via a GitHub Actions workflow and `public/CNAME`; both were removed when the domain moved to Cloudflare Pages.
