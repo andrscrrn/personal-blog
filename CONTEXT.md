@@ -11,7 +11,7 @@ Purpose: Personal blog as fully static HTML with near-zero client JavaScript, mo
 - Fonts: self-hosted WOFF2 latin subsets in `public/fonts/` (Newsreader 400/400i/500/600, JetBrains Mono 400), `font-display: swap`, only 400 normal is preloaded
 - Hosting: Cloudflare Pages (project `personal-blog`, builds `npm run build` from `main`, serves `dist/`); caching rules in `public/_headers`
 - Domain: `andrescarreno.co`, registered at Porkbun, DNS on Cloudflare
-- Analytics: none (GA4 was removed in the Astro migration)
+- Analytics: Cloudflare Web Analytics (privacy-friendly, no cookies), beacon auto-injected at the edge by the proxy, nothing in the repo
 - Comments: none (the Giscus component was removed; re-add as an island if ever needed)
 
 ## Key decisions
